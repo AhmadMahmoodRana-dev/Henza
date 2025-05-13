@@ -84,7 +84,7 @@ const DashboardSidebar = () => {
 
       {/* Desktop Sidebar */}
       <div
-        className={`fixed inset-y-0 left-0 w-[280px]  p-4 transition-transform duration-300 md:max-h-screen ease-in-out bg-[#fff    ]
+        className={`fixed inset-y-0 left-0 w-[280px]  p-4 transition-transform duration-300 md:max-h-screen ease-in-out bg-[#fff]    ]
           md:translate-x-0 border-r border-gray-200 ${
             isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
           } 
@@ -94,7 +94,7 @@ const DashboardSidebar = () => {
         }}
       >
         {/* Logo Section */}
-        <div className="mb-8 p-2 flex justify-between items-center relative">
+        <div className="mb-8 p-2 bg-white flex justify-between items-center relative">
           <img src={Logo} width={200} className="absolute -top-10 left-6" />
           <button
             className="md:hidden p-1"
@@ -105,7 +105,7 @@ const DashboardSidebar = () => {
         </div>
 
         {/* Navigation Items */}
-        <nav className="space-y-2 mt-28">
+        <nav className="space-y-2 mt-28 bg-white">
           {menuItems.map((item) => (
             <Link
               to={item.link}
@@ -130,20 +130,21 @@ const DashboardSidebar = () => {
 
         {/* Bottom Section */}
         <div
-          className="absolute bottom-0 left-0 right-0 p-4 border-t"
+          className="absolute bottom-0 left-0 right-0 p-4 border-t bg-white"
           style={{ borderColor: "#ddd" }}
         >
-          <button
+          <Link
+          to={'/'}
             className="w-full flex items-center px-4 py-3 rounded-lg hover:bg-gray-200"
             style={{
               color: "#444",
-              backgroundColor: "transparent",
+              backgroundColor: "#ededed",
             }}
             onClick={() => console.log("Logout function here")}
           >
             <FiLogOut />
             <span className="ml-3">Log Out</span>
-          </button>
+          </Link>
         </div>
       </div>
 

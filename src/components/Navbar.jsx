@@ -157,7 +157,7 @@ const Navbar = () => {
             <Link to={"/"} className="hover:text-blue-600">
               HOME
             </Link>
-            <Link to={"/"} className="hover:text-blue-600">
+            <Link to={"/dashboard"} className="hover:text-blue-600">
               NEW ARRIVALS
             </Link>
 
