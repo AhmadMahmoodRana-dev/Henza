@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import Footer from "../components/Footer/Footer";
+import axios from "axios";
+import BASEURL from "../constant/BaseUrl";
 
 // Custom regex for Pakistani phone numbers
 const pakistanPhoneRegex = /^(\+92|0)?3[0-9]{2}[-]?[0-9]{7}$/;
@@ -44,9 +46,14 @@ export default function CheckoutForm() {
     billingAddress: "same",
   };
 
-  const handleSubmit = (values) => {
+  const handleSubmit = async (values) => {
     console.log("Form Data:", values);
-    alert("Form submitted successfully!");
+    try {
+      const response = await axios.post(`${BASEURL}henza/Addcustomer`, values);
+      console.log("Form submitted successfully:", response.data);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
   };
 
   return (
@@ -54,7 +61,10 @@ export default function CheckoutForm() {
       <Formik
         initialValues={initialValues}
         validationSchema={CheckoutSchema}
-        onSubmit={handleSubmit}
+        onSubmit={(values, { resetForm }) => {
+          handleSubmit(values);
+          resetForm();
+        }}
       >
         {({ setFieldValue, values }) => (
           <Form className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
