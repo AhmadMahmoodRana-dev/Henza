@@ -611,6 +611,7 @@ const AddProductForm = () => {
       alert("Product uploaded successfully!");
 
       // Reset form
+      setFormData({ ...formData });
       setImages([]);
       setPreviewUrls([]);
     } catch (error) {

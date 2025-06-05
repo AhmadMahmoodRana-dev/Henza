@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 import DashboardLayout from "../components/DashboardLayout";
 const DashboardRoutes = () => {
-  const token = true; // Replace with real auth logic
+  const token = localStorage.getItem('authToken');
   return token ? (
     <DashboardLayout>
       <Outlet />

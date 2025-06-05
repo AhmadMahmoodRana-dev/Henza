@@ -10,6 +10,7 @@ import ProductDetail from "./pages/ProductDetail";
 import ScrollToHash from "./components/ScrollToHash";
 import DashboardRoutes from "./routes/DashboardRoutes";
 import AddProductForm from "./pages/DashboardPages/AddProductForm";
+import Login from "./pages/Login";
 
 export default function App() {
   return (
@@ -17,7 +18,7 @@ export default function App() {
       <ScrollToHash />
       <Routes>
         <Route element={<PublicRoutes />}>
-          <Route path="/login" element={<h1>Login</h1>} />
+          <Route path="/login" element={<Login />} />
         </Route>
 
         <Route element={<PrivateRoutes />}>

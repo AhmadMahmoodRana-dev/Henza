@@ -143,6 +143,8 @@ const Navbar = () => {
     }
   ];
 
+    const token = localStorage.getItem('authToken');
+
   return (
     <nav className="bg-white shadow-sm text-sm mt-6 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -191,6 +193,16 @@ const Navbar = () => {
             <Link to={"/contactUS"} className="hover:text-blue-600">
               CONTACT US
             </Link>
+            {
+              token ? 
+            <Link to={"/dashboard"} className="hover:text-blue-600">
+              DASHBOARD
+            </Link>
+            :
+            <Link to={"/login"} className="hover:text-blue-600">
+              LOGIN
+            </Link>
+            }
           </div>
 
           {/* Icons */}
@@ -355,6 +367,16 @@ const Navbar = () => {
               <Link to="/contactUS" className="block py-3 hover:text-blue-600" onClick={closeAllDropdowns}>
                 CONTACT US
               </Link>
+              {
+              token ? 
+            <Link to={"/dashboard"} className="block py-3 hover:text-blue-600">
+              DASHBOARD
+            </Link>
+            :
+            <Link to={"/login"} className="block py-3 hover:text-blue-600">
+              LOGIN
+            </Link>
+            }
             </div>
           </div>
         )}
