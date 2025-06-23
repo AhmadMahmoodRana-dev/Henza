@@ -1,10 +1,21 @@
 import { useState, useEffect } from "react";
-import Carousel1 from "../../assets/slider (1).png";
-import Carousel2 from "../../assets/slider (2).png";
-import Carousel3 from "../../assets/slider (3).png";
+import axios from "axios";
 const HomePageMainCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const images = [Carousel1, Carousel2, Carousel3];
+  const [images,setImages] = useState([])
+
+  const getCarouselPictures = async () =>{
+    try {
+      const {data} = await axios.get(`https://henza.zaffarsons.com/henza/get-carousel`)
+      console.log(data,"CarouselPICTURES")
+     setImages(prev => {
+      const updated = [...prev, ...data]; // assuming data is an array
+      return updated.slice(-4); // keep only the last 4
+    });
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   const nextSlide = () => {
     setCurrentIndex((prevIndex) =>
@@ -24,9 +35,13 @@ const HomePageMainCarousel = () => {
       nextSlide();
     }, 5000);
 
+    
     return () => clearInterval(interval);
   }, [currentIndex]);
-
+  
+  useEffect(() =>{
+    getCarouselPictures()
+  },[])
   return (
     <div className="relative w-full bg-black mt-4 h-64 md:h-96 overflow-hidden  shadow-lg">
       {/* Images */}
@@ -38,7 +53,7 @@ const HomePageMainCarousel = () => {
           }`}
         >
           <img
-            src={image}
+            src={image.image}
             alt={`Slide ${index + 1}`}
             className="w-full h-full object-cover"
           />
