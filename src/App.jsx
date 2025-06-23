@@ -12,6 +12,7 @@ import DashboardRoutes from "./routes/DashboardRoutes";
 import AddProductForm from "./pages/DashboardPages/AddProductForm";
 import Login from "./pages/Login";
 import AddCarouselPage from "./pages/DashboardPages/AddCarouselPage";
+import AddCategoryPage from "./pages/DashboardPages/AddCategoryPage";
 
 export default function App() {
   return (
@@ -35,6 +36,7 @@ export default function App() {
           <Route index element={<h1>Dashboard Home</h1>} />
           <Route path="create-product" element={<AddProductForm/>} />
           <Route path="create-carousel" element={<AddCarouselPage/>} />
+          <Route path="create-category" element={<AddCategoryPage/>} />
         </Route>
       </Routes>
     </div>

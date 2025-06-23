@@ -1,15 +1,5 @@
-import React, { useState, useEffect } from "react";
-import {
-  FiHome,
-  FiEdit2,
-  FiFileText,
-  FiBarChart2,
-  FiUser,
-  FiSettings,
-  FiLogOut,
-  FiMenu,
-  FiX,
-} from "react-icons/fi";
+import { useState, useEffect } from "react";
+import {FiHome,FiEdit2,FiFileText,FiBarChart2,FiUser,FiSettings,FiLogOut,FiMenu,FiX} from "react-icons/fi";
 import { Link, useLocation } from "react-router-dom";
 import Logo from "../../assets/logo.png";
 const DashboardSidebar = () => {
@@ -31,14 +21,14 @@ const DashboardSidebar = () => {
       link: "/dashboard/create-product",
     },
     {
-      id: "posts",
-      label: "All Products",
+      id: "/dashboard/create-category",
+      label: "Create Category",
       icon: <FiFileText />,
-      link: "/dashboard/all-products",
+      link: "/dashboard/create-category",
     },
     {
-      id: "analytics",
-      label: "Analytics",
+      id: "/dashboard/create-carousel",
+      label: "Create Carousel",
       icon: <FiBarChart2 />,
       link: "/dashboard/create-carousel",
     },
@@ -49,10 +39,10 @@ const DashboardSidebar = () => {
       link: "/dashboard/profile",
     },
     {
-      id: "settings",
-      label: "Settings",
+      id: "/",
+      label: "HomeScreen",
       icon: <FiSettings />,
-      link: "/dashboard/settings",
+      link: "/",
     },
   ];
 
