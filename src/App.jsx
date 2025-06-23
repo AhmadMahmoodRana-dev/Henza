@@ -11,6 +11,7 @@ import ScrollToHash from "./components/ScrollToHash";
 import DashboardRoutes from "./routes/DashboardRoutes";
 import AddProductForm from "./pages/DashboardPages/AddProductForm";
 import Login from "./pages/Login";
+import AddCarouselPage from "./pages/DashboardPages/AddCarouselPage";
 
 export default function App() {
   return (
@@ -33,6 +34,7 @@ export default function App() {
         <Route path="/dashboard" element={<DashboardRoutes />}>
           <Route index element={<h1>Dashboard Home</h1>} />
           <Route path="create-product" element={<AddProductForm/>} />
+          <Route path="create-carousel" element={<AddCarouselPage/>} />
         </Route>
       </Routes>
     </div>

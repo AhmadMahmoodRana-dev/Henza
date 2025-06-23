@@ -40,7 +40,7 @@ const DashboardSidebar = () => {
       id: "analytics",
       label: "Analytics",
       icon: <FiBarChart2 />,
-      link: "/dashboard/analytics",
+      link: "/dashboard/create-carousel",
     },
     {
       id: "profile",
