@@ -39,7 +39,7 @@ const DashboardSidebar = () => {
       link: "/dashboard/profile",
     },
     {
-      id: "/",
+      id: "home",
       label: "HomeScreen",
       icon: <FiSettings />,
       link: "/",

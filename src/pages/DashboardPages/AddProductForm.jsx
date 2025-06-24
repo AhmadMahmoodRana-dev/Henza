@@ -6,12 +6,12 @@ const AddProductForm = () => {
     id: "",
     productName: "",
     productDescription: "",
-    collectionName: "",
     price: "",
     discount: "",
     categories: "",
     productColor: "",
     type: "",
+    collectionName: "",
     inventory: {
       SKU: "",
       inStock: true,
@@ -24,7 +24,7 @@ const AddProductForm = () => {
   const [loading, setLoading] = useState(false);
   const [previewUrls, setPreviewUrls] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
-  const [collectionName, setCollectionName] = useState([]);
+  const [collectionNameOptions, setCollectionNameOptions] = useState([]);
 
   const getCollectionName = async () => {
     try {
@@ -32,7 +32,7 @@ const AddProductForm = () => {
         `https://henza.zaffarsons.com/henza/Collection`
       );
       console.log(data, "COLLECTIONNAME");
-      setCollectionName(data);
+      setCollectionNameOptions(data);
     } catch (error) {
       console.error(error);
     }
@@ -108,12 +108,12 @@ getCollectionName()
     form.append("id", formData.id);
     form.append("productName", formData.productName);
     form.append("productDescription", formData.productDescription);
-    form.append("collectionName", formData.collectionName);
     form.append("price", formData.price);
     form.append("discount", formData.discount);
     form.append("categories", formData.categories);
     form.append("productColor", formData.productColor);
     form.append("type", formData.type);
+    form.append("collectionName", formData.collectionName);
 
     form.append("SKU", formData.inventory.SKU);
     form.append("inStock", formData.inventory.inStock);
@@ -245,7 +245,7 @@ getCollectionName()
                       <option value="" disabled>
                         Select a description
                       </option>
-                      {collectionName?.map((collection) => {
+                      {collectionNameOptions?.map((collection) => {
                         return (
                           <option value={collection?.VALUE_SET_DESCRIPTION}>
                             {collection?.VALUE_SET_DESCRIPTION}
