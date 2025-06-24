@@ -2,8 +2,14 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 const AddProductForm = () => {
+  const generateHenzaID = () => {
+    const timestamp = Date.now(); // current time in milliseconds
+    const random = Math.floor(Math.random() * 10000); // random number 0–9999
+    return `Henza-${timestamp}-${random}`;
+  };
+
   const [formData, setFormData] = useState({
-    id: "",
+    id: generateHenzaID(),
     productName: "",
     productDescription: "",
     price: "",
@@ -38,9 +44,9 @@ const AddProductForm = () => {
     }
   };
 
-  useEffect(() =>{
-getCollectionName()
-  },[])
+  useEffect(() => {
+    getCollectionName();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -199,6 +205,7 @@ getCollectionName()
                       value={formData.id}
                       onChange={handleChange}
                       required
+                      readOnly
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                     />
                   </div>
