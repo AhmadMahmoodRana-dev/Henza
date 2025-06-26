@@ -151,7 +151,7 @@ function TrendingProducts({ show }) {
           {filters.map((filter, index) => (
             <div
               key={index}
-              className="relative flex justify-center items-center"
+              className="relative fl  ex justify-center items-center"
             >
               <button
                 onClick={() => setOpen(open === index ? null : index)}
