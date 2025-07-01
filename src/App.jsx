@@ -16,6 +16,7 @@ import AddCategoryPage from "./pages/DashboardPages/AddCategoryPage";
 import ShowCarouselPage from "./pages/DashboardPages/ShowCarouselPage";
 import ShowProductPage from "./pages/DashboardPages/ShowProductPage";
 import ShowCategoryPage from "./pages/DashboardPages/ShowCategoryPage";
+import MenuManager from "./pages/DashboardPages/MenuManager";
 
 export default function App() {
   return (
@@ -43,6 +44,7 @@ export default function App() {
           <Route path="add-theme" element={<AddCarouselPage/>} />
           <Route path="Collection" element={<ShowCategoryPage/>} />
           <Route path="add-collection" element={<AddCategoryPage/>} />
+          <Route path="menu" element={<MenuManager/>} />
         </Route>
       </Routes>
     </div>
