@@ -33,10 +33,10 @@ const DashboardSidebar = () => {
       link: "/dashboard/Product",
     },
     {
-      id: "/dashboard/Category",
-      label: "Category",
+      id: "/dashboard/Collection",
+      label: "Collection",
       icon: <FiFileText />,
-      link: "/dashboard/Category",
+      link: "/dashboard/Collection",
     },
     {
       id: "profile",

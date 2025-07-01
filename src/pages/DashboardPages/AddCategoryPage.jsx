@@ -41,7 +41,7 @@ const AddCategoryPage = () => {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="min-w-auto max-w-md md:min-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-          Add New Category
+          Add New Collection
         </h2>
 
         {message.text && (
@@ -77,7 +77,7 @@ const AddCategoryPage = () => {
             type="submit"
             className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            Add Category
+            Add Collection
           </button>
         </form>
       </div>
