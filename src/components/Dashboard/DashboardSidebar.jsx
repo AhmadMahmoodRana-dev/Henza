@@ -9,40 +9,40 @@ const DashboardSidebar = () => {
 
   const menuItems = [
     {
+      id: "",
+      label: "HomeScreen",
+      icon: <FiSettings />,
+      link: "/",
+    },
+    {
       id: "/dashboard",
       label: "Dashboard",
       icon: <FiHome />,
       link: "/dashboard",
     },
     {
-      id: "/dashboard/create-product",
-      label: "Create Product",
-      icon: <FiEdit2 />,
-      link: "/dashboard/create-product",
-    },
-    {
-      id: "/dashboard/create-category",
-      label: "Create Category",
-      icon: <FiFileText />,
-      link: "/dashboard/create-category",
-    },
-    {
-      id: "/dashboard/create-carousel",
-      label: "Create Carousel",
+      id: "/dashboard/Themes",
+      label: "Themes",
       icon: <FiBarChart2 />,
-      link: "/dashboard/create-carousel",
+      link: "/dashboard/Themes",
+    },
+    {
+      id: "/dashboard/Product",
+      label: "Product",
+      icon: <FiEdit2 />,
+      link: "/dashboard/Product",
+    },
+    {
+      id: "/dashboard/Category",
+      label: "Category",
+      icon: <FiFileText />,
+      link: "/dashboard/Category",
     },
     {
       id: "profile",
       label: "My Profile",
       icon: <FiUser />,
       link: "/dashboard/profile",
-    },
-    {
-      id: "home",
-      label: "HomeScreen",
-      icon: <FiSettings />,
-      link: "/",
     },
   ];
 
