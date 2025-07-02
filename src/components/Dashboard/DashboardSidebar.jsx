@@ -39,10 +39,10 @@ const DashboardSidebar = () => {
       link: "/dashboard/Collection",
     },
     {
-      id: "profile",
-      label: "My Profile",
+      id: "Menu",
+      label: "Menu",
       icon: <FiUser />,
-      link: "/dashboard/profile",
+      link: "/dashboard/Menu",
     },
   ];
 

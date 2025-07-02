@@ -44,7 +44,7 @@ export default function App() {
           <Route path="add-theme" element={<AddCarouselPage/>} />
           <Route path="Collection" element={<ShowCategoryPage/>} />
           <Route path="add-collection" element={<AddCategoryPage/>} />
-          <Route path="menu" element={<MenuManager/>} />
+          <Route path="Menu" element={<MenuManager/>} />
         </Route>
       </Routes>
     </div>
