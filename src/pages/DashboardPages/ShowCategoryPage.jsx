@@ -59,7 +59,7 @@ const handleEdit = (product) => {
 
 const handleDelete = async (id) => {
   try {
-    const response = await axios.delete(`https://henza.zaffarsons.com/henza/delete-collection/${id}`);
+    const response = await axios.delete(`https://henza.zaffarsons.com/henza/delete-Collection/${id}`);
     console.log("Product deleted:", response);
     fetchProducts(); // Refresh the product list after deletion
   } catch (error) {
@@ -172,7 +172,7 @@ const handleDelete = async (id) => {
                 
                 {/* Delete button */}
                 <button
-                  onClick={() => handleDelete(item?.id)}
+                  onClick={() => handleDelete(item?.VALUE_SET_VALUE)}
                   className="text-red-600 hover:text-red-900 focus:outline-none"
                   title="Delete product"
                 >
