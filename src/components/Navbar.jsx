@@ -14,6 +14,7 @@ const Navbar = () => {
   const [isMobile, setIsMobile] = useState(false);
   const { openCart, setOpenCart } = useContext(Context);
   const { menuTree, loading } = useMenu(); // Get menu data
+  console.log("Menu Tree:", menuTree);
 
   useEffect(() => {
     const handleResize = () => {
@@ -42,14 +43,14 @@ const Navbar = () => {
       <div className="grid grid-cols-4 gap-6">
         {menu.children.map((child) => (
           <div key={child.id}>
-            <h4 className="font-bold mb-2">{child.name}</h4>
+            <Link to={child?.url} className="font-bold mb-2 uppercase">{child.name}</Link>
             {child.children.map((grandchild) => (
               <Link
                 key={grandchild.id}
                 to={grandchild.url || "#"}
                 className="block mb-1 hover:text-blue-600"
               >
-                {grandchild.name}
+                {grandchild.name}1
               </Link>
             ))}
           </div>
@@ -109,13 +110,13 @@ const Navbar = () => {
               <div key={menu.id} className="relative group pb-2">
                 {menu.children.length > 0 ? (
                   <>
-                    <button className="flex items-center hover:text-blue-600">
+                    <button className="flex items-center hover:text-blue-600 uppercase">
                       {menu.name} <ChevronDownIcon className="w-4 h-4 ml-1" />
                     </button>
                     <DesktopDropdown menu={menu} />
                   </>
                 ) : (
-                  <Link to={menu.url || "#"} className="hover:text-blue-600">
+                  <Link to={menu.url || "#"} className="hover:text-blue-600 uppercase">
                     {menu.name}
                   </Link>
                 )}
