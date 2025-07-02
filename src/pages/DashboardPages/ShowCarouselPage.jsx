@@ -8,6 +8,7 @@ export default function ShowCarouselPage() {
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 7;
+// 
 
   const fetchProducts = async () => {
     try {
@@ -57,10 +58,13 @@ const handleEdit = (product) => {
   console.log("Edit product:", product);
 };
 
-const handleDelete = (product) => {
-  // Confirm and delete product
-  if (confirm(`Delete ${product.productName}?`)) {
-    console.log("Delete product:", product);
+const handleDelete = async (id) => {
+  try {
+    const response = await axios.delete(`https://henza.zaffarsons.com/henza/delete-carousel/${id}`);
+    console.log("Product deleted:", response);
+    fetchProducts(); // Refresh the product list after deletion
+  } catch (error) {
+    console.error("Error deleting product:", error);
   }
 };
 
@@ -182,7 +186,7 @@ const handleDelete = (product) => {
                 
                 {/* Delete button */}
                 <button
-                  onClick={() => handleDelete(item)}
+                  onClick={() => handleDelete(item?.id)}
                   className="text-red-600 hover:text-red-900 focus:outline-none"
                   title="Delete product"
                 >
