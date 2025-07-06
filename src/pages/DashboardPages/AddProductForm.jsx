@@ -15,6 +15,7 @@ const AddProductForm = () => {
     price: "",
     discount: "",
     categories: "",
+    menu_id: "",
     productColor: "",
     type: "",
     collectionName: "",
@@ -31,6 +32,7 @@ const AddProductForm = () => {
   const [previewUrls, setPreviewUrls] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
   const [collectionNameOptions, setCollectionNameOptions] = useState([]);
+  const [menuNameOptions, setMenuNameOptions] = useState([]);
 
   const getCollectionName = async () => {
     try {
@@ -44,9 +46,44 @@ const AddProductForm = () => {
     }
   };
 
+  // MENUS ITEM
+
+  const getMenuName = async () => {
+    try {
+      const { data } = await axios.get(
+        `https://henza.zaffarsons.com/henza/get-menu-product`
+      );
+      console.log(data, "Menu Name");
+      setMenuNameOptions(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // Step 1: Get all parent IDs
+  const parentIds = new Set(
+    menuNameOptions.map((item) => item.parentId).filter((id) => id !== null)
+  );
+
+  // Step 2: Filter submenus or top-level items with no children
+  const filtered = menuNameOptions.filter((item) => {
+    const isSubmenu = item.parentId !== null;
+    const isTopLevelWithoutChildren =
+      item.parentId === null && !parentIds.has(item.id);
+    return isSubmenu || isTopLevelWithoutChildren;
+  });
+
+  // Step 3: Map to desired format (optional)
+  const menuresult = filtered.map(({ id, name }) => ({ id, name }));
+
+  console.log(menuresult,"REEESULT DATA");
+
   useEffect(() => {
     getCollectionName();
+    getMenuName();
   }, []);
+
+  // ########
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -120,6 +157,7 @@ const AddProductForm = () => {
     form.append("productColor", formData.productColor);
     form.append("type", formData.type);
     form.append("collectionName", formData.collectionName);
+    form.append("menu_id", formData.menu_id);
 
     form.append("SKU", formData.inventory.SKU);
     form.append("inStock", formData.inventory.inStock);
@@ -130,7 +168,6 @@ const AddProductForm = () => {
     images.forEach((img) => {
       form.append("images", img); // Fixed field name
     });
-    console.log(formData, "FOORORO DATAyy");
 
     try {
       const res = await axios.post(
@@ -250,12 +287,35 @@ const AddProductForm = () => {
                       className=" w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition outline-none"
                     >
                       <option value="" disabled>
-                        Select a description
+                        Select a collection
                       </option>
                       {collectionNameOptions?.map((collection) => {
                         return (
                           <option value={collection?.VALUE_SET_DESCRIPTION}>
                             {collection?.VALUE_SET_DESCRIPTION}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Menu
+                    </label>
+                    <select
+                      name="menu_id"
+                      value={formData.menu_id}
+                      onChange={handleChange}
+                      required
+                      className=" w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition outline-none"
+                    >
+                      <option value="" disabled>
+                        Select a menu
+                      </option>
+                      {menuresult?.map((menu) => {
+                        return (
+                          <option value={menu?.id}>
+                            {menu?.name}
                           </option>
                         );
                       })}
