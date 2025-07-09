@@ -31,9 +31,9 @@ const Navbar = () => {
   };
 
   const toggleMenuExpansion = (id) => {
-    setExpandedMenus(prev => ({
+    setExpandedMenus((prev) => ({
       ...prev,
-      [id]: !prev[id]
+      [id]: !prev[id],
     }));
   };
 
@@ -43,7 +43,12 @@ const Navbar = () => {
       <div className="grid grid-cols-4 gap-6">
         {menu.children.map((child) => (
           <div key={child.id}>
-            <Link to={child?.url} className="font-bold mb-2 uppercase">{child.name}</Link>
+            <Link
+              to={`/menuPages/${child?.id}`}
+              className="font-bold mb-2 uppercase"
+            >
+              {child.name}
+            </Link>
             {child.children.map((grandchild) => (
               <Link
                 key={grandchild.id}
@@ -61,8 +66,8 @@ const Navbar = () => {
 
   // Mobile Menu Component
   const MobileMenuTree = ({ nodes, level = 0 }) => (
-    <ul className={`${level > 0 ? 'pl-4' : ''}`}>
-      {nodes.map(node => (
+    <ul className={`${level > 0 ? "pl-4" : ""}`}>
+      {nodes.map((node) => (
         <li key={node.id} className="border-b">
           {node.children.length > 0 ? (
             <>
@@ -72,7 +77,9 @@ const Navbar = () => {
               >
                 {node.name}
                 <ChevronDownIcon
-                  className={`w-4 h-4 ml-1 transition-transform ${expandedMenus[node.id] ? "rotate-180" : ""}`}
+                  className={`w-4 h-4 ml-1 transition-transform ${
+                    expandedMenus[node.id] ? "rotate-180" : ""
+                  }`}
                 />
               </button>
               {expandedMenus[node.id] && (
@@ -93,7 +100,7 @@ const Navbar = () => {
     </ul>
   );
 
-  const token = localStorage.getItem('authToken');
+  const token = localStorage.getItem("authToken");
 
   return (
     <nav className="bg-white shadow-sm text-sm mt-6 relative">
@@ -106,23 +113,30 @@ const Navbar = () => {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex space-x-6 font-semibold">
-            {!loading && menuTree.map(menu => (
-              <div key={menu.id} className="relative group pb-2">
-                {menu.children.length > 0 ? (
-                  <>
-                    <button className="flex items-center hover:text-blue-600 uppercase">
-                      {menu.name} <ChevronDownIcon className="w-4 h-4 ml-1" />
-                    </button>
-                    <DesktopDropdown menu={menu} />
-                  </>
-                ) : (
-                  <Link to={menu.url || "#"} className="hover:text-blue-600 uppercase">
-                    {menu.name}
-                  </Link>
-                )}
-              </div>
-            ))}
-            
+            <Link to={"/"} className="hover:text-blue-600">
+              HOME
+            </Link>
+            {!loading &&
+              menuTree.map((menu) => (
+                <div key={menu.id} className="relative group pb-2">
+                  {menu.children.length > 0 ? (
+                    <>
+                      <button className="flex items-center hover:text-blue-600 uppercase">
+                        {menu.name} <ChevronDownIcon className="w-4 h-4 ml-1" />
+                      </button>
+                      <DesktopDropdown menu={menu} />
+                    </>
+                  ) : (
+                    <Link
+                      to={menu.id || "#"}
+                      className="hover:text-blue-600 uppercase"
+                    >
+                      {menu.name}
+                    </Link>
+                  )}
+                </div>
+              ))}
+
             {token ? (
               <Link to={"/dashboard"} className="hover:text-blue-600">
                 DASHBOARD
@@ -184,21 +198,19 @@ const Navbar = () => {
         {isMobileMenuOpen && (
           <div className="md:hidden absolute top-20 left-0 w-full bg-white shadow-md z-20">
             <div className="px-4 py-2">
-              {!loading && (
-                <MobileMenuTree nodes={menuTree} />
-              )}
-              
+              {!loading && <MobileMenuTree nodes={menuTree} />}
+
               {token ? (
-                <Link 
-                  to={"/dashboard"} 
+                <Link
+                  to={"/dashboard"}
                   className="block py-3 hover:text-blue-600"
                   onClick={closeAllDropdowns}
                 >
                   DASHBOARD
                 </Link>
               ) : (
-                <Link 
-                  to={"/login"} 
+                <Link
+                  to={"/login"}
                   className="block py-3 hover:text-blue-600"
                   onClick={closeAllDropdowns}
                 >

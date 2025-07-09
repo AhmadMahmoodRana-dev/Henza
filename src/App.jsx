@@ -17,6 +17,7 @@ import ShowCarouselPage from "./pages/DashboardPages/ShowCarouselPage";
 import ShowProductPage from "./pages/DashboardPages/ShowProductPage";
 import ShowCategoryPage from "./pages/DashboardPages/ShowCategoryPage";
 import MenuManager from "./pages/DashboardPages/MenuManager";
+import MenuPage from "./pages/MenuPage";
 
 export default function App() {
   return (
@@ -34,6 +35,7 @@ export default function App() {
           <Route path="/checkout" element={<CheckoutForm />} />
           <Route path="/productDetail/:id" element={<ProductDetail />} />
           <Route path="/category/:name" element={<CategoryPage />} />
+          <Route path="/menuPages/:menuId" element={<MenuPage />} />
         </Route>
         {/* Dashboard Routes */}
         <Route path="/dashboard" element={<DashboardRoutes />}>
