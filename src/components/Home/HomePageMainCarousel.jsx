@@ -1,21 +1,22 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+
 const HomePageMainCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [images,setImages] = useState([])
+  const [images, setImages] = useState([]);
 
-  const getCarouselPictures = async () =>{
+  const getCarouselPictures = async () => {
     try {
-      const {data} = await axios.get(`https://henza.zaffarsons.com/henza/get-carousel`)
-      console.log(data,"CarouselPICTURES")
-     setImages(prev => {
-      const updated = [...prev, ...data]; // assuming data is an array
-      return updated.slice(-4); // keep only the last 4
-    });
+      const { data } = await axios.get(`https://henza.zaffarsons.com/henza/get-carousel`);
+      console.log(data, "CarouselPICTURES");
+      setImages((prev) => {
+        const updated = [...prev, ...data]; // assuming data is an array
+        return updated.slice(-4); // keep only the last 4
+      });
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-  }
+  };
 
   const nextSlide = () => {
     setCurrentIndex((prevIndex) =>
@@ -29,22 +30,22 @@ const HomePageMainCarousel = () => {
     );
   };
 
-  // Auto-play functionality
+  // Auto-play
   useEffect(() => {
     const interval = setInterval(() => {
       nextSlide();
     }, 5000);
 
-    
     return () => clearInterval(interval);
   }, [currentIndex]);
-  
-  useEffect(() =>{
-    getCarouselPictures()
-  },[])
+
+  useEffect(() => {
+    getCarouselPictures();
+  }, []);
+
   return (
-    <div className="relative w-full bg-black mt-4 h-64 md:h-96 overflow-hidden  shadow-lg">
-      {/* Images */}
+    <div className="relative w-full bg-black mt-4 aspect-[3/1] overflow-hidden shadow-lg">
+      {/* Carousel Images */}
       {images.map((image, index) => (
         <div
           key={index}
@@ -60,7 +61,7 @@ const HomePageMainCarousel = () => {
         </div>
       ))}
 
-      {/* Navigation arrows */}
+      {/* Navigation Arrows */}
       <button
         onClick={prevSlide}
         className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/75 transition-colors"
@@ -99,7 +100,7 @@ const HomePageMainCarousel = () => {
         </svg>
       </button>
 
-      {/* Indicators */}
+      {/* Dots / Indicators */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
         {images.map((_, index) => (
           <button
