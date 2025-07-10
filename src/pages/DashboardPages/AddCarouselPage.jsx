@@ -14,13 +14,36 @@ const AddCarouselPage = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFormData(prev => ({ ...prev, image: file }));
-      setPreviewUrl(URL.createObjectURL(file));
-    }
-  };
+ const handleImageChange = (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    img.src = objectUrl;
+
+    img.onload = () => {
+      if (img.width > 1600 || img.height > 600) {
+        setMessage({ text: 'Image size must be 1500x500 pixels or smaller.', type: 'error' });
+        setFormData(prev => ({ ...prev, image: null }));
+        setPreviewUrl('');
+        document.getElementById('image-upload').value = ''; // clear input
+        URL.revokeObjectURL(objectUrl);
+      } else {
+        setFormData(prev => ({ ...prev, image: file }));
+        setPreviewUrl(objectUrl);
+        setMessage({ text: '', type: '' }); // clear previous message
+      }
+    };
+
+    img.onerror = () => {
+      setMessage({ text: 'Invalid image file.', type: 'error' });
+      setFormData(prev => ({ ...prev, image: null }));
+      setPreviewUrl('');
+      document.getElementById('image-upload').value = '';
+    };
+  }
+};
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -122,6 +145,11 @@ const AddCarouselPage = () => {
                 />
               </div>
             )}
+          </div>
+
+          <div className='mb-8 flex items-center gap-4 bg-[#ffe4e6] py-2 px-4 rounded-2xl'>
+            <div className='bg-[#c93638] rounded-full w-2 h-2'/>
+            <p className='text-sm text-[#c93638]'>Image size must be 1500x500 pixels or smaller.</p>
           </div>
 
           <button
