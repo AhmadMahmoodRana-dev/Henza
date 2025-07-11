@@ -9,3 +9,27 @@
 .description-content li {
   margin-bottom: 0.5rem;
 }
+
+
+.inner-image-zoom__img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.inner-image-zoom__zoom-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  max-width: none;
+}
+.inner-image-zoom__zoomed-area {
+  position: absolute;
+  overflow: hidden;
+  pointer-events: none;
+}
+.inner-image-zoom__zoom-lens {
+  position: absolute;
+  pointer-events: none;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}

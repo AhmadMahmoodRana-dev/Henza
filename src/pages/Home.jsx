@@ -52,7 +52,7 @@ const Home = () => {
         {/* <HomePageCategorySlider /> */}
         {/* <LargeCardSlider heading={"Shop Accessories"} products={products} /> */}
         {/* <HomePageGridStructure heading={"SUMMER LAWN '25"} /> */}
-        <TrendingProducts />
+        <TrendingProducts product={allProductData} />
         {/* <OneTimeShowModel /> */}
       </div>
 

@@ -14,7 +14,7 @@ import { Link, useParams } from "react-router-dom";
 import { Context } from "../Context/Context";
 import Footer from "../components/Footer/Footer";
 import axios from "axios";
-import DOMPurify from "dompurify"; // Import DOMPurify for HTML sanitization
+import DOMPurify from "dompurify";
 
 const ProductDetail = () => {
   const { id } = useParams();
