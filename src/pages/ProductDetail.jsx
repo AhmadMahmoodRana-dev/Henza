@@ -26,19 +26,20 @@ const ProductDetail = () => {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const { setOpenCart } = useContext(Context); // your cart context (assumed)
 
-  const fetchData = async () => {
-    try {
-      const { data } = await axios.get(
-        `http://henza.zaffarsons.com/henza/get-product/${id}`
-      );
-      setSingleData(data);
-      setProductsImages(data?.images || []);
-      setCurrentImage(data?.images?.[0] || "");
-      setColor(data?.productColor?.[0] || ""); // set default color if available
-    } catch (error) {
-      console.error(error);
-    }
-  };
+const fetchData = async () => {
+  try {
+    const { data } = await axios.get(
+      `http://henza.zaffarsons.com/henza/get-product/${id}`
+    );
+    console.log("Fetched product:", data); // <- Add this
+    setSingleData(data);
+    setProductsImages(data?.images || []);
+    setCurrentImage(data?.images?.[0] || "");
+    setColor(data?.productColor?.[0] || "");
+  } catch (error) {
+    console.error("Failed to fetch product:", error); // <- Log actual error
+  }
+};
 
   useEffect(() => {
     fetchData();
