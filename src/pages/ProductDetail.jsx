@@ -29,7 +29,7 @@ const ProductDetail = () => {
 const fetchData = async () => {
   try {
     const { data } = await axios.get(
-      `http://henza.zaffarsons.com/henza/get-product/${id}`
+      `https://henza.zaffarsons.com/henza/get-product/${id}`
     );
     console.log("Fetched product:", data); // <- Add this
     setSingleData(data);
