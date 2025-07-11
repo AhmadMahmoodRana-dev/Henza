@@ -14,6 +14,7 @@ import { Link, useParams } from "react-router-dom";
 import { Context } from "../Context/Context";
 import Footer from "../components/Footer/Footer";
 import axios from "axios";
+import DOMPurify from "dompurify"; // Import DOMPurify for HTML sanitization
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -45,7 +46,9 @@ const ProductDetail = () => {
 
   const shareProduct = (platform) => {
     const productUrl = encodeURIComponent(window.location.href);
-    const productName = encodeURIComponent(singleData?.productName || "Product");
+    const productName = encodeURIComponent(
+      singleData?.productName || "Product"
+    );
     const text = encodeURIComponent("Check out this product I found!");
 
     const shareConfig = {
@@ -86,25 +89,33 @@ const ProductDetail = () => {
     <>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 md:grid-cols-2 gap-12">
         {/* Product Images */}
+        {/* Product Images */}
         <div className="space-y-6">
-          <div className="aspect-square overflow-hidden rounded-2xl shadow-lg border-2 border-gray-100">
+          {/* Main Image with 600x850 Aspect Ratio */}
+          <div
+            className="w-full overflow-hidden rounded-2xl shadow-lg border-2 border-gray-100"
+            style={{ aspectRatio: "600 / 850" }}
+          >
             <img
               src={currentImage}
               alt="Product"
               className="w-full h-full object-cover transform transition duration-500 hover:scale-105"
             />
           </div>
+
+          {/* Thumbnails also matching 600x850 */}
           <div className="flex gap-3 pb-4 overflow-x-auto scrollbar-hide">
             {productImages.map((img, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentImage(img)}
                 className="shrink-0 focus:outline-none"
+                style={{ aspectRatio: "600 / 850", width: "80px" }}
               >
                 <img
                   src={img}
                   alt={`Thumb ${index}`}
-                  className={`w-20 h-20 object-cover rounded-lg border-2 transition-all ${
+                  className={`w-full h-full object-cover rounded-lg border-2 transition-all ${
                     currentImage === img
                       ? "border-rose-500"
                       : "border-gray-200 hover:border-gray-300"
@@ -125,6 +136,20 @@ const ProductDetail = () => {
               PKR {singleData?.price}
             </p>
           </div>
+          {/* Product Description */}
+          {singleData?.productDescription && (
+            <div className="pb-16">
+              <h2 className="text-2xl font-bold text-gray-900 mb-8 border-b pb-4">
+                Product Details
+              </h2>
+              <div
+                className="description-content text-gray-700 text-base leading-relaxed"
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(singleData.productDescription),
+                }}
+              />
+            </div>
+          )}
 
           {/* Color Selection */}
           <div>
@@ -212,12 +237,32 @@ const ProductDetail = () => {
             </h3>
             <div className="flex gap-4">
               {[
-                { icon: FaFacebookF, platform: "facebook", color: "bg-blue-600" },
-                { icon: FaWhatsapp, platform: "whatsapp", color: "bg-green-500" },
-                { icon: FaInstagram, platform: "instagram", color: "bg-pink-600" },
+                {
+                  icon: FaFacebookF,
+                  platform: "facebook",
+                  color: "bg-blue-600",
+                },
+                {
+                  icon: FaWhatsapp,
+                  platform: "whatsapp",
+                  color: "bg-green-500",
+                },
+                {
+                  icon: FaInstagram,
+                  platform: "instagram",
+                  color: "bg-pink-600",
+                },
                 { icon: FaTwitter, platform: "twitter", color: "bg-sky-500" },
-                { icon: FaPinterest, platform: "pinterest", color: "bg-red-600" },
-                { icon: FaLinkedinIn, platform: "linkedin", color: "bg-blue-800" },
+                {
+                  icon: FaPinterest,
+                  platform: "pinterest",
+                  color: "bg-red-600",
+                },
+                {
+                  icon: FaLinkedinIn,
+                  platform: "linkedin",
+                  color: "bg-blue-800",
+                },
               ].map((social, index) => (
                 <button
                   key={index}

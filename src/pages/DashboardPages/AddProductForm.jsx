@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
+import { Editor } from "@tinymce/tinymce-react";
 
 const AddProductForm = () => {
   const generateHenzaID = () => {
@@ -33,6 +34,14 @@ const AddProductForm = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [collectionNameOptions, setCollectionNameOptions] = useState([]);
   const [menuNameOptions, setMenuNameOptions] = useState([]);
+  const editorRef = useRef(null);
+
+  const handleEditorChange = (content) => {
+    setFormData((prev) => ({
+      ...prev,
+      productDescription: content,
+    }));
+  };
 
   const getCollectionName = async () => {
     try {
@@ -76,7 +85,7 @@ const AddProductForm = () => {
   // Step 3: Map to desired format (optional)
   const menuresult = filtered.map(({ id, name }) => ({ id, name }));
 
-  console.log(menuresult,"REEESULT DATA");
+  console.log(menuresult, "REEESULT DATA");
 
   useEffect(() => {
     getCollectionName();
@@ -139,8 +148,8 @@ const AddProductForm = () => {
     e.preventDefault();
 
     // Validate image count
-    if (images.length !== 3) {
-      alert("Please select exactly 3 images");
+    if (formData?.discount > 100) {
+      alert("Discount cannot be more than 100%");
       return;
     }
 
@@ -261,20 +270,35 @@ const AddProductForm = () => {
                     />
                   </div>
 
-                  <div>
+                  <div className="mt-4">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Description *
                     </label>
-                    <textarea
-                      name="productDescription"
-                      placeholder="Detailed product description"
+                    <Editor
+                      apiKey={import.meta.env.VITE_TINYMCEKEY} // Corrected environment variable
+                      onInit={(evt, editor) => (editorRef.current = editor)}
                       value={formData.productDescription}
-                      onChange={handleChange}
-                      required
-                      rows="4"
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                      onEditorChange={handleEditorChange}
+                      init={{
+                        height: 300,
+                        menubar: true,
+                        plugins: [
+                          "advlist autolink lists link charmap print preview anchor", // Removed image plugin
+                          "searchreplace visualblocks code fullscreen",
+                          "insertdatetime table paste code help wordcount", // Removed media plugin
+                        ],
+                        toolbar:
+                          "undo redo | formatselect | " +
+                          "bold italic backcolor | alignleft aligncenter " +
+                          "alignright alignjustify | bullist numlist outdent indent | " +
+                          "removeformat | help", // Removed image button
+                        content_style:
+                          "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                        // Removed images_upload_handler completely
+                      }}
                     />
                   </div>
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Collection
@@ -313,11 +337,7 @@ const AddProductForm = () => {
                         Select a menu
                       </option>
                       {menuresult?.map((menu) => {
-                        return (
-                          <option value={menu?.id}>
-                            {menu?.name}
-                          </option>
-                        );
+                        return <option value={menu?.id}>{menu?.name}</option>;
                       })}
                     </select>
                   </div>
