@@ -143,7 +143,7 @@ const handleDelete = async (id) => {
                 : "hover:bg-gray-50"
             }
           >
-            <td className="py-3 pl-4">
+            <td className="py-3 pl-6">
               <input
                 type="checkbox"
                 className="h-4 w-4 text-blue-600 rounded"

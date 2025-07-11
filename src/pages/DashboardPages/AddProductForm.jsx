@@ -506,6 +506,13 @@ const AddProductForm = () => {
 
             {/* Image Upload Section */}
             <div className="mt-10 pt-8 border-t border-gray-200">
+              <div className="mb-8 flex items-center gap-4 bg-[#ffe4e6] py-2 px-4 rounded-2xl">
+                <div className="bg-[#c93638] rounded-full w-2 h-2" />
+                <p className="text-sm text-[#c93638]">
+                  Image size must be 600X850 pixels or smaller.
+                </p>
+              </div>
+
               <h2 className="text-xl font-bold text-gray-800 mb-6">
                 Product Images
               </h2>
