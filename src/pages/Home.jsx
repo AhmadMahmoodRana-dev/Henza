@@ -37,7 +37,7 @@ const Home = () => {
     <div>
       <div className="w-full min-h-screen xl:px-16 lg:px-12 md:px-10 sm:px-8 px-4 ">
         <HomePageMainCarousel />
-        <HomePageCategorySlider heading={"UNSTITCHED"} />
+        <HomePageCategorySlider heading={"COLLECTIONS"} />
         {/* <HomePageGridStructure heading={"Shop Luxury Picks"} /> */}
         {Object.entries(groupedProducts).map(([collection, products]) => (
           <div key={collection}>

@@ -1,24 +1,23 @@
 import React, { useEffect, useState } from "react";
 import SliderCard from "./SliderCard";
 import { IoIosArrowBack } from "react-icons/io";
-import carousel1 from "../../assets/category (4).png";
-import carousel2 from "../../assets/category (12).png";
-import carousel3 from "../../assets/category (11).png";
-import carousel4 from "../../assets/category (14).png";
-import carousel5 from "../../assets/category (8).png";
-import carousel6 from "../../assets/category (9).png";
-import carousel7 from "../../assets/category (10).png";
+import axios from "axios";
 
 const HomePageCategorySlider = ({heading}) => {
-  const products = [
-    { id: 1, name: "Lawn '25 ", image: carousel1, link: "/category/" },
-    { id: 2, name: "Day to Day Summer", image: carousel2, link: "/category/" },
-    { id: 3, name: "1 Piece", image: carousel3, link: "/category/" },
-    { id: 4, name: "2 Piece", image: carousel4, link: "/category/" },
-    { id: 5, name: "3 Piece", image: carousel5, link: "/category/" },
-    { id: 6, name: "Unstitched Bottoms", image: carousel6, link: "/category/" },
-    { id: 7, name: "Karachi", image: carousel7, link: "/category/" },
-  ];
+  const [products,setProducts] = useState([])
+
+const getCollection = async () => {
+  try {
+const { data } = await axios.get("https://henza.zaffarsons.com/henza/Collection");
+      setProducts(data);  } catch (error) {
+    
+  }
+}
+
+useEffect(() =>{
+  getCollection()
+})
+
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [perSlide, setPerSlide] = useState(1);
@@ -98,7 +97,7 @@ const HomePageCategorySlider = ({heading}) => {
                 }}
               >
                 <div className="w-full px-2">
-                  <SliderCard name={p.name} image={p.image} link={p.link} />
+                  <SliderCard name={p.VALUE_SET_DESCRIPTION} image={p.image} link={p.link} />
                 </div>
               </div>
             ))}

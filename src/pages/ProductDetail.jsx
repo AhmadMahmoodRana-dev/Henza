@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import {
   FaMinus,
   FaPlus,
@@ -24,26 +24,75 @@ const ProductDetail = () => {
   const [color, setColor] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
-  const { setOpenCart } = useContext(Context); // your cart context (assumed)
+  const { setOpenCart } = useContext(Context);
+  
+  // Lens zoom states
+  const [isZoomActive, setIsZoomActive] = useState(false);
+  const [lensPosition, setLensPosition] = useState({ x: 0, y: 0 });
+  const [zoomedPosition, setZoomedPosition] = useState({ x: 0, y: 0 });
+  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
+  
+  const imageContainerRef = useRef(null);
+  const lensRef = useRef(null);
+  const zoomedRef = useRef(null);
 
-const fetchData = async () => {
-  try {
-    const { data } = await axios.get(
-      `https://henza.zaffarsons.com/henza/get-product/${id}`
-    );
-    console.log("Fetched product:", data); // <- Add this
-    setSingleData(data);
-    setProductsImages(data?.images || []);
-    setCurrentImage(data?.images?.[0] || "");
-    setColor(data?.productColor?.[0] || "");
-  } catch (error) {
-    console.error("Failed to fetch product:", error); // <- Log actual error
-  }
-};
+  const fetchData = async () => {
+    try {
+      const { data } = await axios.get(
+        `https://henza.zaffarsons.com/henza/get-product/${id}`
+      );
+      setSingleData(data);
+      setProductsImages(data?.images || []);
+      setCurrentImage(data?.images?.[0] || "");
+      setColor(data?.productColor?.[0] || "");
+    } catch (error) {
+      console.error("Failed to fetch product:", error);
+    }
+  };
 
   useEffect(() => {
     fetchData();
   }, []);
+
+  // Update container size on resize and initial load
+  useEffect(() => {
+    const updateContainerSize = () => {
+      if (imageContainerRef.current) {
+        const { width, height } = imageContainerRef.current.getBoundingClientRect();
+        setContainerSize({ width, height });
+      }
+    };
+    
+    updateContainerSize();
+    window.addEventListener('resize', updateContainerSize);
+    
+    return () => {
+      window.removeEventListener('resize', updateContainerSize);
+    };
+  }, [currentImage]);
+
+  const handleMouseMove = (e) => {
+    if (!imageContainerRef.current || !lensRef.current || !zoomedRef.current) return;
+    
+    const containerRect = imageContainerRef.current.getBoundingClientRect();
+    const lensRect = lensRef.current.getBoundingClientRect();
+    
+    // Calculate cursor position relative to the container
+    const x = e.clientX - containerRect.left;
+    const y = e.clientY - containerRect.top;
+    
+    // Calculate lens position (centered on cursor)
+    const lensX = Math.max(0, Math.min(x - lensRect.width / 2, containerRect.width - lensRect.width));
+    const lensY = Math.max(0, Math.min(y - lensRect.height / 2, containerRect.height - lensRect.height));
+    
+    setLensPosition({ x: lensX, y: lensY });
+    
+    // Calculate background position for zoomed view
+    const zoomedX = -(x * 2 - lensRect.width / 2);
+    const zoomedY = -(y * 2 - lensRect.height / 2);
+    
+    setZoomedPosition({ x: zoomedX, y: zoomedY });
+  };
 
   const shareProduct = (platform) => {
     const productUrl = encodeURIComponent(window.location.href);
@@ -81,30 +130,72 @@ const fetchData = async () => {
     cart.push(selectedProduct);
     localStorage.setItem("cart", JSON.stringify(cart));
 
-    console.log("Product added to cart:", selectedProduct);
-
-    setOpenCart(true); // if you're using a cart sidebar/modal
+    setOpenCart(true);
   };
 
   return (
     <>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 md:grid-cols-2 gap-12">
         {/* Product Images */}
-        {/* Product Images */}
         <div className="space-y-6">
-          {/* Main Image with 600x850 Aspect Ratio */}
-          <div
-            className="w-full overflow-hidden rounded-2xl shadow-lg border-2 border-gray-100"
+          {/* Main Image with Lens Zoom */}
+          <div 
+            className="relative w-full overflow-hidden rounded-2xl shadow-lg border-2 border-gray-100"
             style={{ aspectRatio: "600 / 850" }}
+            ref={imageContainerRef}
+            onMouseEnter={() => setIsZoomActive(true)}
+            onMouseLeave={() => setIsZoomActive(false)}
+            onMouseMove={handleMouseMove}
           >
             <img
               src={currentImage}
               alt="Product"
-              className="w-full h-full object-cover transform transition duration-500 hover:scale-105"
+              className="w-full h-full object-cover"
             />
+            
+            {/* Lens overlay */}
+            {isZoomActive && currentImage && (
+              <div 
+                ref={lensRef}
+                className="absolute border-2 border-white rounded-full shadow-lg cursor-none pointer-events-none"
+                style={{
+                  width: '150px',
+                  height: '150px',
+                  left: `${lensPosition.x}px`,
+                  top: `${lensPosition.y}px`,
+                  zIndex: 10,
+                  backgroundImage: `url(${currentImage})`,
+                  backgroundSize: `${containerSize.width * 2}px ${containerSize.height * 2}px`,
+                  backgroundPosition: `-${lensPosition.x * 2}px -${lensPosition.y * 2}px`,
+                  backgroundRepeat: 'no-repeat',
+                }}
+              />
+            )}
           </div>
 
-          {/* Thumbnails also matching 600x850 */}
+          {/* Zoomed Preview Container */}
+          {isZoomActive && currentImage && (
+            <div 
+              className="absolute hidden md:block w-[400px] h-[400px] border-2 border-gray-200 rounded-lg shadow-xl overflow-hidden bg-white z-20"
+              style={{
+                left: `${imageContainerRef.current?.getBoundingClientRect().right + 20}px`,
+                top: `${imageContainerRef.current?.getBoundingClientRect().top}px`,
+              }}
+              ref={zoomedRef}
+            >
+              <div 
+                className="w-full h-full"
+                style={{
+                  backgroundImage: `url(${currentImage})`,
+                  backgroundSize: `${containerSize.width * 2}px ${containerSize.height * 2}px`,
+                  backgroundPosition: `${zoomedPosition.x}px ${zoomedPosition.y}px`,
+                  backgroundRepeat: 'no-repeat',
+                }}
+              />
+            </div>
+          )}
+
+          {/* Thumbnails */}
           <div className="flex gap-3 pb-4 overflow-x-auto scrollbar-hide">
             {productImages.map((img, index) => (
               <button
@@ -137,6 +228,7 @@ const fetchData = async () => {
               PKR {singleData?.price}
             </p>
           </div>
+          
           {/* Product Description */}
           {singleData?.productDescription && (
             <div className="pb-16">

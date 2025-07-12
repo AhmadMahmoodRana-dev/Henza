@@ -47,7 +47,7 @@ const MenuPage = () => {
                 <HomePageGridStructure heading={collection} data={products} />
           </div>
         ))}
-        <TrendingProducts />
+        {/* <TrendingProducts /> */}
       </div>
 
       <Footer />
