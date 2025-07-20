@@ -1,49 +1,125 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 
 const AddCategoryPage = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [message, setMessage] = useState({ text: "", type: "" });
-  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [active, setActive] = useState("Y");
+  const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState("");
+  const [currentImage, setCurrentImage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (id) {
+      const fetchCollection = async () => {
+        try {
+          const response = await axios.get(
+            `https://henza.zaffarsons.com/henza/Collection/${id}`
+          );
+          const collection = response.data;
+          setDescription(collection.VALUE_SET_DESCRIPTION);
+          setActive(collection.ACTIVE);
+          
+          // FIX: Use the correct image path from the API response
+          setCurrentImage(collection.image); 
+        } catch (error) {
+          setMessage({ 
+            text: "Failed to load collection: " + error.message, 
+            type: "error" 
+          });
+        }
+      };
+      fetchCollection();
+    }
+  }, [id]);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImage(file);
+      setPreview(URL.createObjectURL(file));
+      setCurrentImage(""); // Clear current image when new image is selected
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
-    if (!name) {
-      setMessage({ text: "All fields are required", type: "error" });
+    if (!description) {
+      setMessage({ text: "Description is required", type: "error" });
+      setIsSubmitting(false);
       return;
     }
 
+    const formData = new FormData();
+    formData.append("description", description);
+    formData.append("active", active);
+    if (image) formData.append("image", image);
+
     try {
-      const response = await axios.post(
-        "https://henza.zaffarsons.com/henza/add-Collection",
-        {
-          description: name,
+      let response;
+      if (id) {
+        response = await axios.put(
+          `https://henza.zaffarsons.com/henza/update-collection/${id}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+      } else {
+        if (!image) {
+          setMessage({ text: "Image is required", type: "error" });
+          setIsSubmitting(false);
+          return;
         }
-      );
+        
+        response = await axios.post(
+          "https://henza.zaffarsons.com/henza/add-Collection",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+      }
 
-     console.log(response,"CATEGORY RESPONSE")
-
-      if (response.status == "201") {
-        setMessage({ text: "Category added successfully!", type: "success" });
-        setName("");
+      if (response.status === 200 || response.status === 201) {
+        setMessage({
+          text: `Collection ${id ? "updated" : "added"} successfully!`,
+          type: "success",
+        });
+        setTimeout(() => navigate("/dashboard/Collection"), 1500);
       } else {
         setMessage({
-          text: result.message || "Error adding carousel",
+          text: response.data?.message || `Error ${id ? "updating" : "adding"} collection`,
           type: "error",
         });
       }
     } catch (error) {
-      setMessage({ text: "Network error: " + error.message, type: "error" });
+      setMessage({
+        text: "Error: " + (error.response?.data?.error || error.message),
+        type: "error",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="min-w-auto max-w-md md:min-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-          Add New Collection
-        </h2>
-
+    <div className="max-w-2xl mx-auto p-4">
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">
+        {id ? "Edit Collection" : "Add New Collection"}
+      </h1>
+      
+      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow">
         {message.text && (
           <div
             className={`mb-4 p-3 rounded ${
@@ -56,31 +132,92 @@ const AddCategoryPage = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label
-              htmlFor="title"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Name
-            </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-              placeholder="Category Name"
-            />
-          </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 mb-2" htmlFor="description">
+            Description *
+          </label>
+          <input
+            type="text"
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
 
+        <div className="mb-4">
+          <label className="block text-gray-700 mb-2">Status</label>
+          <div className="flex space-x-4">
+            <label className="inline-flex items-center">
+              <input
+                type="radio"
+                value="Y"
+                checked={active === "Y"}
+                onChange={() => setActive("Y")}
+                className="form-radio h-4 w-4 text-blue-600"
+              />
+              <span className="ml-2">Active</span>
+            </label>
+            <label className="inline-flex items-center">
+              <input
+                type="radio"
+                value="N"
+                checked={active === "N"}
+                onChange={() => setActive("N")}
+                className="form-radio h-4 w-4 text-blue-600"
+              />
+              <span className="ml-2">Inactive</span>
+            </label>
+          </div>
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-gray-700 mb-2" htmlFor="image">
+            {id ? "Update Image" : "Image *"}
+          </label>
+          <input
+            type="file"
+            id="image"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required={!id}
+          />
+          
+          {(preview || currentImage) && (
+            <div className="mt-4">
+              <img 
+                src={preview || currentImage} 
+                alt="Preview" 
+                className="h-48 w-full object-contain border rounded" 
+              />
+              {!preview && currentImage && (
+                <p className="text-sm text-gray-500 mt-2">Current image</p>
+              )}
+            </div>
+          )}
+        </div>
+
+        <div className="flex justify-end space-x-3">
+          <button
+            type="button"
+            onClick={() => navigate("/collections")}
+            className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100"
+          >
+            Cancel
+          </button>
           <button
             type="submit"
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            disabled={isSubmitting}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-blue-400"
           >
-            Add Collection
+            {isSubmitting 
+              ? (id ? "Updating..." : "Adding...") 
+              : (id ? "Update Collection" : "Add Collection")}
           </button>
-        </form>
-      </div>
+        </div>
+      </form>
     </div>
   );
 };
