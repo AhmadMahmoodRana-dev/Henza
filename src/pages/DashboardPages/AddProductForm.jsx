@@ -1,14 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Editor } from "@tinymce/tinymce-react";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
-const AddProductForm = () => {
+const AddProductForm = ({ initialProduct = null }) => {
   const generateHenzaID = () => {
-    const timestamp = Date.now(); // current time in milliseconds
-    const random = Math.floor(Math.random() * 10000); // random number 0–9999
+    const timestamp = Date.now();
+    const random = Math.floor(Math.random() * 10000);
     return `Henza-${timestamp}-${random}`;
   };
 
+  // State initialization
   const [formData, setFormData] = useState({
     id: generateHenzaID(),
     productName: "",
@@ -16,10 +19,12 @@ const AddProductForm = () => {
     price: "",
     discount: "",
     categories: "",
-    menu_id: "",
+    menu_ids: "",
     productColor: "",
     type: "",
     collectionName: "",
+    sizes: "",
+    active: true,
     inventory: {
       SKU: "",
       inStock: true,
@@ -29,12 +34,57 @@ const AddProductForm = () => {
   });
 
   const [images, setImages] = useState([]);
+  const [existingImages, setExistingImages] = useState([]); // For edit mode
+  const [removedImages, setRemovedImages] = useState([]); // Track removed images
   const [loading, setLoading] = useState(false);
   const [previewUrls, setPreviewUrls] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
   const [collectionNameOptions, setCollectionNameOptions] = useState([]);
   const [menuNameOptions, setMenuNameOptions] = useState([]);
+  const [selectedMenuIds, setSelectedMenuIds] = useState([]);
   const editorRef = useRef(null);
+  const navigate = useNavigate();
+
+  // Initialize form when initialProduct changes (edit mode)
+  useEffect(() => {
+    if (initialProduct) {
+      // Set form data
+      setFormData({
+        id: initialProduct.id,
+        productName: initialProduct.productName,
+        productDescription: initialProduct.productDescription,
+        price: initialProduct.price,
+        discount: initialProduct.discount,
+        categories: initialProduct.categories,
+        menu_ids: initialProduct.menu_ids,
+        productColor: initialProduct.productColor,
+        type: initialProduct.type,
+        collectionName: initialProduct.collectionName,
+        sizes: initialProduct.sizes,
+        active: initialProduct.active,
+        inventory: {
+          SKU: initialProduct.inventory?.SKU || "",
+          inStock: initialProduct.inventory?.inStock || true,
+          quantityAvailable: initialProduct.inventory?.quantityAvailable || "",
+          lowStockThreshold: initialProduct.inventory?.lowStockThreshold || "",
+        },
+      });
+
+      // Set existing images
+      if (initialProduct.images && initialProduct.images.length > 0) {
+        setExistingImages(initialProduct.images);
+        setPreviewUrls(initialProduct.images);
+      }
+
+      // Set selected menu IDs
+      if (initialProduct.menu_ids) {
+        const ids = initialProduct.menu_ids
+          .split(",")
+          .filter((id) => id !== "");
+        setSelectedMenuIds(ids);
+      }
+    }
+  }, [initialProduct]);
 
   const handleEditorChange = (content) => {
     setFormData((prev) => ({
@@ -48,51 +98,27 @@ const AddProductForm = () => {
       const { data } = await axios.get(
         `https://henza.zaffarsons.com/henza/Collection`
       );
-      console.log(data, "COLLECTIONNAME");
       setCollectionNameOptions(data);
     } catch (error) {
       console.error(error);
     }
   };
 
-  // MENUS ITEM
-
   const getMenuName = async () => {
     try {
       const { data } = await axios.get(
         `https://henza.zaffarsons.com/henza/get-menu-product`
       );
-      console.log(data, "Menu Name");
       setMenuNameOptions(data);
     } catch (error) {
       console.error(error);
     }
   };
 
-  // Step 1: Get all parent IDs
-  const parentIds = new Set(
-    menuNameOptions.map((item) => item.parentId).filter((id) => id !== null)
-  );
-
-  // Step 2: Filter submenus or top-level items with no children
-  const filtered = menuNameOptions.filter((item) => {
-    const isSubmenu = item.parentId !== null;
-    const isTopLevelWithoutChildren =
-      item.parentId === null && !parentIds.has(item.id);
-    return isSubmenu || isTopLevelWithoutChildren;
-  });
-
-  // Step 3: Map to desired format (optional)
-  const menuresult = filtered.map(({ id, name }) => ({ id, name }));
-
-  console.log(menuresult, "REEESULT DATA");
-
   useEffect(() => {
     getCollectionName();
     getMenuName();
   }, []);
-
-  // ########
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -109,17 +135,50 @@ const AddProductForm = () => {
     } else {
       setFormData((prev) => ({
         ...prev,
-        [name]: value,
+        [name]: type === "checkbox" ? checked : value,
       }));
     }
   };
 
+  const handleMenuSelection = (menuId) => {
+    const updatedIds = selectedMenuIds.includes(menuId)
+      ? selectedMenuIds.filter((id) => id !== menuId)
+      : [...selectedMenuIds, menuId];
+
+    setSelectedMenuIds(updatedIds);
+    setFormData((prev) => ({
+      ...prev,
+      menu_ids: updatedIds.join(","),
+    }));
+  };
+
   const handleImageChange = (e) => {
-    const files = Array.from(e.target.files).slice(0, 3);
-    setImages(files);
+    const files = Array.from(e.target.files);
+    setImages((prev) => [...prev, ...files]);
 
     const urls = files.map((file) => URL.createObjectURL(file));
-    setPreviewUrls(urls);
+    setPreviewUrls((prev) => [...prev, ...urls]);
+  };
+
+  const removeImage = (index, isExisting = false) => {
+    if (isExisting) {
+      // Handle existing image removal
+      const removedUrl = existingImages[index];
+      setRemovedImages((prev) => [...prev, removedUrl]);
+
+      const newExisting = [...existingImages];
+      newExisting.splice(index, 1);
+      setExistingImages(newExisting);
+    } else {
+      // Handle new image removal
+      const newImages = [...images];
+      newImages.splice(index, 1);
+      setImages(newImages);
+    }
+
+    const newUrls = [...previewUrls];
+    newUrls.splice(index, 1);
+    setPreviewUrls(newUrls);
   };
 
   const handleDragOver = (e) => {
@@ -136,20 +195,19 @@ const AddProductForm = () => {
     setIsDragging(false);
 
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const files = Array.from(e.dataTransfer.files).slice(0, 3);
-      setImages(files);
+      const files = Array.from(e.dataTransfer.files);
+      setImages((prev) => [...prev, ...files]);
 
       const urls = files.map((file) => URL.createObjectURL(file));
-      setPreviewUrls(urls);
+      setPreviewUrls((prev) => [...prev, ...urls]);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate image count
     if (formData?.discount > 100) {
-      alert("Discount cannot be more than 100%");
+      toast.error("Discount cannot be more than 100%");
       return;
     }
 
@@ -166,37 +224,110 @@ const AddProductForm = () => {
     form.append("productColor", formData.productColor);
     form.append("type", formData.type);
     form.append("collectionName", formData.collectionName);
-    form.append("menu_id", formData.menu_id);
+    form.append("menu_ids", formData.menu_ids);
+    form.append("sizes", formData.sizes);
+    form.append("active", formData.active);
 
     form.append("SKU", formData.inventory.SKU);
     form.append("inStock", formData.inventory.inStock);
     form.append("quantityAvailable", formData.inventory.quantityAvailable);
     form.append("lowStockThreshold", formData.inventory.lowStockThreshold);
 
-    // CORRECTED IMAGE UPLOAD
+    // Handle images differently for edit mode
+    if (initialProduct) {
+      // Edit mode: send existing images to keep
+      existingImages.forEach((img) => {
+        form.append("existingImages", img);
+      });
+
+      // Send removed images
+      removedImages.forEach((img) => {
+        form.append("removedImages", img);
+      });
+    }
+
+    // Append new images
     images.forEach((img) => {
-      form.append("images", img); // Fixed field name
+      form.append("images", img);
     });
 
     try {
-      const res = await axios.post(
-        "https://henza.zaffarsons.com/henza/add-full-product",
-        form,
-        { headers: { "Content-Type": "multipart/form-data" } }
+      let res;
+      if (initialProduct) {
+        // PUT request for update
+        res = await axios.put(
+          `https://henza.zaffarsons.com/henza/update-product/${formData.id}`,
+          form,
+          { headers: { "Content-Type": "multipart/form-data" } }
+        );
+        navigate("/dashboard/Product");
+      } else {
+        // POST request for new product
+        res = await axios.post(
+          "https://henza.zaffarsons.com/henza/add-full-product",
+          form,
+          { headers: { "Content-Type": "multipart/form-data" } }
+        );
+      }
+
+      toast.success(
+        initialProduct
+          ? "Product updated successfully!"
+          : "Product uploaded successfully!"
       );
 
-      alert("Product uploaded successfully!");
-      // Reset form
-      setFormData({ ...formData });
-      setImages([]);
-      setPreviewUrls([]);
+      // Reset form only if not in edit mode
+      if (!initialProduct) {
+        setFormData({
+          ...formData,
+          id: generateHenzaID(),
+          productName: "",
+          productDescription: "",
+          price: "",
+          discount: "",
+          categories: "",
+          menu_ids: "",
+          productColor: "",
+          type: "",
+          collectionName: "",
+          sizes: "",
+          active: true,
+          inventory: {
+            SKU: "",
+            inStock: true,
+            quantityAvailable: "",
+            lowStockThreshold: "",
+          },
+        });
+        setImages([]);
+        setPreviewUrls([]);
+        setSelectedMenuIds([]);
+        setExistingImages([]);
+        setRemovedImages([]);
+      }
     } catch (error) {
       console.error("Upload error:", error.response?.data || error.message);
-      alert(`Upload failed: ${error.response?.data?.message || error.message}`);
+      toast.error(
+        `Operation failed: ${error.response?.data?.message || error.message}`
+      );
     } finally {
       setLoading(false);
     }
   };
+
+  // Filter menu options
+  const parentIds = new Set(
+    menuNameOptions.map((item) => item.parentId).filter((id) => id !== null)
+  );
+
+  const filtered = menuNameOptions.filter((item) => {
+    const isSubmenu = item.parentId !== null;
+    const isTopLevelWithoutChildren =
+      item.parentId === null && !parentIds.has(item.id);
+    return isSubmenu || isTopLevelWithoutChildren;
+  });
+
+  const menuresult = filtered.map(({ id, name }) => ({ id, name }));
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
@@ -205,12 +336,12 @@ const AddProductForm = () => {
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-600 to-indigo-700 px-8 py-10 text-center">
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-              Product Upload Center
+              {initialProduct ? "Edit Product" : "Product Upload Center"}
             </h1>
             <p className="text-blue-100 max-w-xl mx-auto">
-              Add new products to your inventory with all necessary details.
-              Ensure you provide accurate information for better customer
-              experience.
+              {initialProduct
+                ? "Update product details and images"
+                : "Add new products to your inventory with all necessary details"}
             </p>
           </div>
 
@@ -275,7 +406,7 @@ const AddProductForm = () => {
                       Description *
                     </label>
                     <Editor
-                      apiKey={import.meta.env.VITE_TINYMCEKEY} // Corrected environment variable
+                      apiKey={import.meta.env.VITE_TINYMCEKEY}
                       onInit={(evt, editor) => (editorRef.current = editor)}
                       value={formData.productDescription}
                       onEditorChange={handleEditorChange}
@@ -283,18 +414,17 @@ const AddProductForm = () => {
                         height: 300,
                         menubar: true,
                         plugins: [
-                          "advlist autolink lists link charmap print preview anchor", // Removed image plugin
+                          "advlist autolink lists link charmap print preview anchor",
                           "searchreplace visualblocks code fullscreen",
-                          "insertdatetime table paste code help wordcount", // Removed media plugin
+                          "insertdatetime table paste code help wordcount",
                         ],
                         toolbar:
                           "undo redo | formatselect | " +
                           "bold italic backcolor | alignleft aligncenter " +
                           "alignright alignjustify | bullist numlist outdent indent | " +
-                          "removeformat | help", // Removed image button
+                          "removeformat | help",
                         content_style:
                           "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
-                        // Removed images_upload_handler completely
                       }}
                     />
                   </div>
@@ -315,31 +445,42 @@ const AddProductForm = () => {
                       </option>
                       {collectionNameOptions?.map((collection) => {
                         return (
-                          <option value={collection?.VALUE_SET_DESCRIPTION}>
+                          <option
+                            key={collection.VALUE_SET_DESCRIPTION}
+                            value={collection?.VALUE_SET_DESCRIPTION}
+                          >
                             {collection?.VALUE_SET_DESCRIPTION}
                           </option>
                         );
                       })}
                     </select>
                   </div>
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Menu
+                      Menus
                     </label>
-                    <select
-                      name="menu_id"
-                      value={formData.menu_id}
-                      onChange={handleChange}
-                      required
-                      className=" w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition outline-none"
-                    >
-                      <option value="" disabled>
-                        Select a menu
-                      </option>
+                    <div className="space-y-2 max-h-40 overflow-y-auto p-2 border rounded">
                       {menuresult?.map((menu) => {
-                        return <option value={menu?.id}>{menu?.name}</option>;
+                        return (
+                          <div key={menu.id} className="flex items-center">
+                            <input
+                              type="checkbox"
+                              id={`menu-${menu.id}`}
+                              checked={selectedMenuIds.includes(menu.id)}
+                              onChange={() => handleMenuSelection(menu.id)}
+                              className="mr-2"
+                            />
+                            <label
+                              htmlFor={`menu-${menu.id}`}
+                              className="text-sm"
+                            >
+                              {menu.name}
+                            </label>
+                          </div>
+                        );
                       })}
-                    </select>
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
@@ -420,6 +561,22 @@ const AddProductForm = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Available Sizes
+                    </label>
+                    <input
+                      name="sizes"
+                      placeholder="e.g., S, M, L, XL"
+                      value={formData.sizes}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                    />
+                    <p className="mt-1 text-xs text-gray-500">
+                      Separate multiple sizes with commas
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
                       Product Type
                     </label>
                     <input
@@ -482,21 +639,39 @@ const AddProductForm = () => {
                         </div>
                       </div>
 
-                      <div className="flex items-center pt-2">
-                        <input
-                          id="inStock"
-                          name="inventory.inStock"
-                          type="checkbox"
-                          checked={formData.inventory.inStock}
-                          onChange={handleChange}
-                          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                        />
-                        <label
-                          htmlFor="inStock"
-                          className="ml-2 block text-sm text-gray-700"
-                        >
-                          In Stock
-                        </label>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="flex items-center">
+                          <input
+                            id="inStock"
+                            name="inventory.inStock"
+                            type="checkbox"
+                            checked={formData.inventory.inStock}
+                            onChange={handleChange}
+                            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                          />
+                          <label
+                            htmlFor="inStock"
+                            className="ml-2 block text-sm text-gray-700"
+                          >
+                            In Stock
+                          </label>
+                        </div>
+                        <div className="flex items-center">
+                          <input
+                            id="active"
+                            name="active"
+                            type="checkbox"
+                            checked={formData.active}
+                            onChange={handleChange}
+                            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                          />
+                          <label
+                            htmlFor="active"
+                            className="ml-2 block text-sm text-gray-700"
+                          >
+                            Active
+                          </label>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -549,7 +724,7 @@ const AddProductForm = () => {
                     or click to browse files
                   </p>
                   <p className="mt-2 text-xs text-gray-400">
-                    Upload exactly 3 images (PNG, JPG up to 5MB each)
+                    Upload multiple images (PNG, JPG up to 5MB each)
                   </p>
                 </div>
                 <input
@@ -558,7 +733,6 @@ const AddProductForm = () => {
                   accept="image/*"
                   multiple
                   onChange={handleImageChange}
-                  required
                   className="hidden"
                 />
               </div>
@@ -570,18 +744,33 @@ const AddProductForm = () => {
                     Selected Images
                   </h3>
                   <div className="flex flex-wrap gap-4">
-                    {previewUrls.map((url, index) => (
-                      <div key={index} className="relative group">
-                        <img
-                          src={url}
-                          alt={`Preview ${index + 1}`}
-                          className="w-32 h-32 object-cover rounded-lg border border-gray-200 shadow-sm"
-                        />
-                        <div className="absolute bottom-2 right-2 bg-blue-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
-                          {index + 1}
+                    {previewUrls.map((url, index) => {
+                      const isExisting = existingImages.includes(url);
+                      return (
+                        <div key={index} className="relative group">
+                          <img
+                            src={url}
+                            alt={`Preview ${index + 1}`}
+                            className="w-32 h-32 object-cover rounded-lg border border-gray-200 shadow-sm"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeImage(index, isExisting)}
+                            className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                          >
+                            ×
+                          </button>
+                          {isExisting && (
+                            <div className="absolute top-0 left-0 bg-blue-500 text-white text-xs px-2 py-1 rounded-br-lg">
+                              Existing
+                            </div>
+                          )}
+                          <div className="absolute bottom-2 right-2 bg-blue-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+                            {index + 1}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -620,8 +809,10 @@ const AddProductForm = () => {
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       ></path>
                     </svg>
-                    Uploading...
+                    {initialProduct ? "Updating..." : "Uploading..."}
                   </span>
+                ) : initialProduct ? (
+                  "Update Product"
                 ) : (
                   "Upload Product"
                 )}
@@ -629,10 +820,6 @@ const AddProductForm = () => {
             </div>
           </form>
         </div>
-
-        {/* <div className="mt-8 text-center text-gray-500 text-sm">
-          <p>© 2023 Product Management System. All rights reserved.</p>
-        </div> */}
       </div>
     </div>
   );
