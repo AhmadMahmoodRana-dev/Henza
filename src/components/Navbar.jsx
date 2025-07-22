@@ -1,10 +1,9 @@
-// src/components/Navbar.js
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import React, { useState, useEffect, useContext } from "react";
-import { FaUser, FaShoppingCart, FaSearch, FaTimes } from "react-icons/fa";
+import { useState, useEffect, useContext } from "react";
+import { FaUser,FaSearch, FaTimes } from "react-icons/fa";
 import { FaShopify } from "react-icons/fa";
 import { Context } from "../Context/Context";
-import logo from "../assets/logo.png";
+import logo from "../assets/logo.jpg";
 import { Link } from "react-router-dom";
 import { useMenu } from "../Context/MenuContext";
 
@@ -45,7 +44,7 @@ const Navbar = () => {
           <div key={child.id}>
             <Link
               to={`/menuPages/${child?.id}`}
-              className="font-bold mb-2 uppercase"
+              className="font-bold mb-2 uppercase hover:text-blue-600"
             >
               {child.name}
             </Link>
@@ -103,12 +102,12 @@ const Navbar = () => {
   const token = localStorage.getItem("authToken");
 
   return (
-    <nav className="bg-white shadow-sm text-sm mt-6 relative">
+    <nav className="bg-white shadow-sm text-sm mt-6  sticky top-8 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <div className="flex items-center space-x-2">
-            <img src={logo} alt="Zeeki Logo" className="mt-3 h-28" />
+            <img src={logo} alt="Zeeki Logo" className=" h-16" />
           </div>
 
           {/* Desktop Menu */}
