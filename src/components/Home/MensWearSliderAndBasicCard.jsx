@@ -26,7 +26,7 @@ const percentage = getDiscountPercentage(item?.price, item?.discount);
         />
 
         {percentage && (
-          <span className="absolute top-2 left-2 bg-[#075686] text-white text-sm px-2 py-1 rounded">
+          <span className="absolute top-2 left-2 bg-[#fc2743] text-white text-sm px-2 py-1 rounded">
             {percentage.toFixed(2)}%
           </span>
         )}
@@ -51,7 +51,7 @@ const percentage = getDiscountPercentage(item?.price, item?.discount);
           <p className="text-md line-through text-[#000000] font-semibold">
             PKR {item?.price}
           </p>
-          <p className="text-md text-[#075686] font-semibold">
+          <p className="text-md text-[#fc2743] font-semibold">
             PKR {item?.price - item?.discount}
           </p>
         </div>
