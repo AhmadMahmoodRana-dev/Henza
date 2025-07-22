@@ -285,7 +285,7 @@ const AddProductForm = ({ initialProduct = null }) => {
           productDescription: "",
           price: "",
           discount: "",
-          categories: "",
+          categories: "default",
           menu_ids: "",
           productColor: "",
           type: "",
@@ -527,22 +527,6 @@ const AddProductForm = ({ initialProduct = null }) => {
                 </h2>
 
                 <div className="space-y-5">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Categories
-                    </label>
-                    <input
-                      name="categories"
-                      placeholder="e.g., Furniture, Decor"
-                      value={formData.categories}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                    />
-                    <p className="mt-1 text-xs text-gray-500">
-                      Separate multiple categories with commas
-                    </p>
-                  </div>
-
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Available Colors

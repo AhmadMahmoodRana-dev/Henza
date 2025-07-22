@@ -1,4 +1,3 @@
-import React from "react";
 import { FaRegHeart } from "react-icons/fa";
 import { IoBagAddOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
@@ -37,7 +36,7 @@ const MensWearSliderAndBasicCard = ({ index, item }) => {
       </div>
 
       <div className="p-4">
-        <p className="text-lg text-[#075686] font-semibold">
+        {/* <p className="text-lg text-[#075686] font-semibold">
           PKR {item?.price - avg}
         </p>
 
@@ -45,9 +44,9 @@ const MensWearSliderAndBasicCard = ({ index, item }) => {
           <p className="text-sm text-gray-400 line-through">
             PKR {item?.price.toLocaleString()}
           </p>
-        )}
+        )} */}
 
-        <p className="text-sm mt-2">{item?.productName}</p>
+        <p className="text-sm mt-2 font-semibold text-center">{item?.productName}</p>
 
         {/* Uncomment this if needed */}
         {/* {product.express && (

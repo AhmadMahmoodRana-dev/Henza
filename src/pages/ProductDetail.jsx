@@ -57,11 +57,7 @@ const ProductDetail = () => {
 
     const shareConfig = {
       facebook: `https://www.facebook.com/sharer/sharer.php?u=${productUrl}`,
-      twitter: `https://twitter.com/intent/tweet?text=${text}&url=${productUrl}`,
-      pinterest: `https://pinterest.com/pin/create/button/?url=${productUrl}&description=${productName}`,
       whatsapp: `https://api.whatsapp.com/send?text=${text} ${productUrl}`,
-      linkedin: `https://www.linkedin.com/shareArticle?mini=true&url=${productUrl}&title=${productName}`,
-      instagram: `https://www.instagram.com/?url=${productUrl}`,
     };
 
     if (shareConfig[platform]) {
@@ -171,13 +167,13 @@ const ProductDetail = () => {
           <div className="flex flex-col sm:flex-row gap-4">
             <button
               onClick={handleAddToCart}
-              className="flex-1 py-3 text-lg text-white bg-black hover:bg-gray-800 rounded-lg"
+              className="flex-1 py-1 text-lg text-white bg-black hover:bg-gray-800 rounded-lg"
             >
               Add to Cart
             </button>
             <Link
               to="/checkout"
-              className="flex-1 py-3 text-lg text-black border border-gray-400 rounded-lg text-center hover:bg-gray-100"
+              className="flex-1 py-1 text-lg text-black border border-gray-400 rounded-lg text-center hover:bg-gray-100"
             >
               Buy Now
             </Link>
@@ -186,7 +182,7 @@ const ProductDetail = () => {
           {/* Wishlist */}
           <button
             onClick={() => setIsWishlisted(!isWishlisted)}
-            className="w-full py-3 text-sm rounded-lg border border-gray-300 hover:border-rose-400 flex justify-center items-center gap-2"
+            className="w-full py-2 text-sm rounded-lg border border-gray-300 hover:border-rose-400 flex justify-center items-center gap-2"
           >
             <FaHeart className={`h-4 w-4 ${isWishlisted ? "text-rose-500" : ""}`} />
             {isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
@@ -216,10 +212,6 @@ const ProductDetail = () => {
               {[
                 { icon: FaFacebookF, platform: "facebook", color: "bg-blue-600" },
                 { icon: FaWhatsapp, platform: "whatsapp", color: "bg-green-500" },
-                { icon: FaInstagram, platform: "instagram", color: "bg-pink-500" },
-                { icon: FaTwitter, platform: "twitter", color: "bg-sky-500" },
-                { icon: FaPinterest, platform: "pinterest", color: "bg-red-600" },
-                { icon: FaLinkedinIn, platform: "linkedin", color: "bg-blue-800" },
               ].map((social, index) => (
                 <button
                   key={index}
