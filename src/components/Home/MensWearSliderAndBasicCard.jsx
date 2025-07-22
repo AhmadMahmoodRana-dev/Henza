@@ -3,7 +3,14 @@ import { IoBagAddOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
 
 const MensWearSliderAndBasicCard = ({ index, item }) => {
-  console.log("ITEM", item);
+const getDiscountPercentage = (originalPrice, discountAmount) => {
+  if (!originalPrice || originalPrice === 0) return 0;
+  return (discountAmount / originalPrice) * 100;
+};
+
+
+
+const percentage = getDiscountPercentage(item?.price, item?.discount);
 
   return (
     <Link
@@ -18,9 +25,9 @@ const MensWearSliderAndBasicCard = ({ index, item }) => {
           className="w-full h-full object-cover rounded-t-lg"
         />
 
-        {item?.discount && (
+        {percentage && (
           <span className="absolute top-2 left-2 bg-[#075686] text-white text-sm px-2 py-1 rounded">
-            -{item.discount}%
+            {percentage.toFixed(2)}%
           </span>
         )}
 
