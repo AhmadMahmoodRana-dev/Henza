@@ -35,7 +35,7 @@ const percentage = getDiscountPercentage(item?.price, item?.discount);
           <FaRegHeart />
         </button>
 
-        <button className="bg-white p-3 hover:bg-[#075686] hover:text-white transition-all ease-in-out duration-1000 cursor-pointer rounded-full absolute bottom-2 right-1">
+        <button className="bg-white p-3 hover:bg-[#fc2743] hover:text-white transition-all ease-in-out duration-1000 cursor-pointer rounded-full absolute bottom-2 right-1">
           <IoBagAddOutline />
         </button>
       </div>
