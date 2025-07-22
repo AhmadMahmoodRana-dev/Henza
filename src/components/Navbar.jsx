@@ -12,8 +12,7 @@ const Navbar = () => {
   const [expandedMenus, setExpandedMenus] = useState({});
   const [isMobile, setIsMobile] = useState(false);
   const { openCart, setOpenCart } = useContext(Context);
-  const { menuTree, loading } = useMenu(); // Get menu data
-  console.log("Menu Tree:", menuTree);
+  const { menuTree, loading } = useMenu(); 
 
   useEffect(() => {
     const handleResize = () => {
@@ -44,7 +43,7 @@ const Navbar = () => {
           <div key={child.id}>
             <Link
               to={`/menuPages/${child?.id}`}
-              className="font-bold mb-2 uppercase hover:text-blue-600"
+              className="font-bold mb-2 uppercase hover:text-[#fc2743]"
             >
               {child.name}
             </Link>
@@ -52,7 +51,7 @@ const Navbar = () => {
               <Link
                 key={grandchild.id}
                 to={grandchild.url || "#"}
-                className="block mb-1 hover:text-blue-600"
+                className="block mb-1 hover:text-[#fc2743]"
               >
                 {grandchild.name}1
               </Link>
@@ -71,7 +70,7 @@ const Navbar = () => {
           {node.children.length > 0 ? (
             <>
               <button
-                className="w-full flex justify-between items-center py-3 hover:text-blue-600"
+                className="w-full flex justify-between items-center py-3 hover:text-[#fc2743]"
                 onClick={() => toggleMenuExpansion(node.id)}
               >
                 {node.name}
@@ -88,7 +87,7 @@ const Navbar = () => {
           ) : (
             <Link
               to={node.url || "#"}
-              className="block py-3 hover:text-blue-600"
+              className="block py-3 hover:text-[#fc2743]"
               onClick={closeAllDropdowns}
             >
               {node.name}
@@ -112,7 +111,7 @@ const Navbar = () => {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex space-x-6 font-semibold">
-            <Link to={"/"} className="hover:text-blue-600">
+            <Link to={"/"} className="hover:text-[#fc2743]">
               HOME
             </Link>
             {!loading &&
@@ -120,7 +119,7 @@ const Navbar = () => {
                 <div key={menu.id} className="relative group pb-2">
                   {menu.children.length > 0 ? (
                     <>
-                      <button className="flex items-center hover:text-blue-600 uppercase">
+                      <button className="flex items-center hover:text-[#fc2743] uppercase">
                         {menu.name} <ChevronDownIcon className="w-4 h-4 ml-1" />
                       </button>
                       <DesktopDropdown menu={menu} />
@@ -128,7 +127,7 @@ const Navbar = () => {
                   ) : (
                     <Link
                       to={menu.id || "#"}
-                      className="hover:text-blue-600 uppercase"
+                      className="hover:text-[#fc2743] uppercase"
                     >
                       {menu.name}
                     </Link>
@@ -137,11 +136,11 @@ const Navbar = () => {
               ))}
 
             {token ? (
-              <Link to={"/dashboard"} className="hover:text-blue-600">
+              <Link to={"/dashboard"} className="hover:text-[#fc2743]">
                 DASHBOARD
               </Link>
             ) : (
-              <Link to={"/login"} className="hover:text-blue-600">
+              <Link to={"/login"} className="hover:text-[#fc2743]">
                 LOGIN
               </Link>
             )}
@@ -202,7 +201,7 @@ const Navbar = () => {
               {token ? (
                 <Link
                   to={"/dashboard"}
-                  className="block py-3 hover:text-blue-600"
+                  className="block py-3 hover:text-[#fc2743]"
                   onClick={closeAllDropdowns}
                 >
                   DASHBOARD
@@ -210,7 +209,7 @@ const Navbar = () => {
               ) : (
                 <Link
                   to={"/login"}
-                  className="block py-3 hover:text-blue-600"
+                  className="block py-3 hover:text-[#fc2743]"
                   onClick={closeAllDropdowns}
                 >
                   LOGIN
