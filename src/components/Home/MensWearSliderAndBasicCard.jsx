@@ -3,17 +3,15 @@ import { IoBagAddOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
 
 const MensWearSliderAndBasicCard = ({ index, item }) => {
-    const avg = (item?.price * item?.discount) / 100;
+  console.log("ITEM", item);
+
   return (
     <Link
       to={`/productDetail/${item?.id}`}
       key={index}
       className="min-w-[200px] cursor-pointer bg-white rounded-lg shadow hover:shadow-md transition duration-200 relative"
     >
-      <div
-        className="relative w-full"
-        style={{ aspectRatio: "600 / 850" }}
-      >
+      <div className="relative w-full" style={{ aspectRatio: "600 / 850" }}>
         <img
           src={item?.images[0]}
           alt={item?.productName}
@@ -36,18 +34,20 @@ const MensWearSliderAndBasicCard = ({ index, item }) => {
       </div>
 
       <div className="p-4">
-        {/* <p className="text-lg text-[#075686] font-semibold">
-          PKR {item?.price - avg}
+        <p className="text-sm font-light tracking-wider text-[#000000]">
+          {item?.collectionName}
         </p>
-
-        {item?.price && (
-          <p className="text-sm text-gray-400 line-through">
-            PKR {item?.price.toLocaleString()}
+        <p className="text-xl text-[#000000] font-semibold capitalize">
+          {item?.productName}
+        </p>
+        <div className="flex gap-4">
+          <p className="text-md line-through text-[#000000] font-semibold">
+            PKR {item?.price}
           </p>
-        )} */}
-
-        <p className="text-sm mt-2 font-semibold text-center">{item?.productName}</p>
-
+          <p className="text-md text-[#075686] font-semibold">
+            PKR {item?.price - item?.discount}
+          </p>
+        </div>
         {/* Uncomment this if needed */}
         {/* {product.express && (
           <span className="mt-2 inline-block bg-blue-500 text-white text-xs px-2 py-1 rounded">

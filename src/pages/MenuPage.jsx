@@ -100,7 +100,7 @@ const MenuPage = () => {
   return (
     <>
       <div className="w-full min-h-screen xl:px-16 lg:px-12 md:px-10 sm:px-8 px-4">
-        <HomePageMainCarousel />
+        {/* <HomePageMainCarousel /> */}
 
         <div className="flex justify-between items-center mb-6 mt-6">
           <h2 className="text-2xl font-semibold"></h2>
