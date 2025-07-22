@@ -49,10 +49,10 @@ const percentage = getDiscountPercentage(item?.price, item?.discount);
         </p>
         <div className="flex gap-4">
           <p className="text-md line-through text-[#000000] font-semibold">
-            PKR {item?.price}
+            PKR {item?.price.toLocaleString() || 0}
           </p>
           <p className="text-md text-[#fc2743] font-semibold">
-            PKR {item?.price - item?.discount}
+            PKR {(item?.price - item?.discount).toLocaleString()}
           </p>
         </div>
         {/* Uncomment this if needed */}

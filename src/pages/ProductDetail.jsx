@@ -189,10 +189,10 @@ const percentage = getDiscountPercentage(singleData?.price, singleData?.discount
              </p>
              <div className="flex gap-4">
                <p className="text-xl line-through font-semibold text-black mb-4">
-                 PKR {singleData?.price}
+                 PKR {singleData?.price.toLocaleString() || 0}
                </p>
                <p className="text-xl font-semibold text-rose-600 mb-4">
-                 PKR {singleData?.price - singleData?.discount}
+                 PKR {(singleData?.price - singleData?.discount).toLocaleString()}
                </p>
                </div>
              <p className="text-sm text-gray-400*: mb-4 tracking-widest">
