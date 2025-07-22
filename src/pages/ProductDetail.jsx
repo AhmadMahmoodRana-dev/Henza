@@ -201,6 +201,8 @@ const percentage = getDiscountPercentage(singleData?.price, singleData?.discount
           </div>
 
           {/* Size */}
+          {
+            singleData?.sizes?.length > 0 &&
           <div>
             <h3 className="text-base font-medium text-gray-700 mb-2">Size</h3>
             <div className="flex gap-2">
@@ -214,6 +216,7 @@ const percentage = getDiscountPercentage(singleData?.price, singleData?.discount
               ))}
             </div>
           </div>
+          }
 
           {/* Color */}
           <div>
