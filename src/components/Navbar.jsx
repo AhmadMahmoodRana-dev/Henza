@@ -42,7 +42,7 @@ const Navbar = () => {
         {menu.children.map((child) => (
           <div key={child.id}>
             <Link
-              to={`/menuPages/${child?.id}`}
+              to={`/menuPages/${child?.name}/${child?.id}`}
               className="font-bold mb-2 uppercase hover:text-[#fc2743]"
             >
               {child.name}

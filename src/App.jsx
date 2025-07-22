@@ -35,7 +35,7 @@ export default function App() {
           <Route path="/checkout" element={<CheckoutForm />} />
           <Route path="/productDetail/:id" element={<ProductDetail />} />
           <Route path="/category/:name" element={<CategoryPage />} />
-          <Route path="/menuPages/:menuId" element={<MenuPage />} />
+          <Route path="/menuPages/:name/:menuId" element={<MenuPage />} />
         </Route>
         {/* Dashboard Routes */}
         <Route path="/dashboard" element={<DashboardRoutes />}>

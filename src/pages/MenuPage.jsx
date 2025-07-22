@@ -8,7 +8,7 @@ import { useParams } from "react-router-dom";
 const MenuPage = () => {
   const [allProductData, setAllProductData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { menuId } = useParams();
+  const { menuId, name } = useParams();
 
   const [selectedPriceRanges, setSelectedPriceRanges] = useState([]);
   const [selectedLetters, setSelectedLetters] = useState([]);
@@ -38,10 +38,6 @@ const MenuPage = () => {
     { id: "5000-10000", label: "5000 - 10000 PKR", min: 5000, max: 10000 },
     { id: "10000+", label: "Over 10000 PKR", min: 10000, max: Infinity },
   ];
-
- 
-
-  
 
   const resetFilters = () => {
     setSelectedPriceRanges([]);
@@ -96,14 +92,14 @@ const MenuPage = () => {
     }, {});
   }, [filteredProducts]);
 
- 
   return (
     <>
       <div className="w-full min-h-screen xl:px-16 lg:px-12 md:px-10 sm:px-8 px-4">
         {/* <HomePageMainCarousel /> */}
+        <h2 className="text-2xl font-semibold border-b border-gray-300 py-6">{name}</h2>
 
         <div className="flex justify-between items-center mb-6 mt-6">
-          <h2 className="text-2xl font-semibold"></h2>
+        <h2></h2>
           <select
             value={sortOption}
             onChange={(e) => setSortOption(e.target.value)}
@@ -120,38 +116,38 @@ const MenuPage = () => {
           </select>
         </div>
 
-          <div className="w-full">
-            {loading ? (
-              <div className="flex justify-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-rose-600"></div>
+        <div className="w-full">
+          {loading ? (
+            <div className="flex justify-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-rose-600"></div>
+            </div>
+          ) : filteredProducts.length === 0 ? (
+            <div className="text-center py-12">
+              <h3 className="text-xl font-semibold text-gray-700">
+                No products found
+              </h3>
+              <p className="text-gray-500 mt-2">
+                Try adjusting your filters to find what you're looking for
+              </p>
+              <button
+                onClick={resetFilters}
+                className="mt-4 bg-rose-600 text-white px-4 py-2 rounded-lg hover:bg-rose-700"
+              >
+                Reset Filters
+              </button>
+            </div>
+          ) : (
+            Object.entries(groupedProducts).map(([collection, products]) => (
+              <div key={collection} className="mb-12">
+                <CategoryPageGridStructure
+                  heading={collection}
+                  data={products}
+                />
               </div>
-            ) : filteredProducts.length === 0 ? (
-              <div className="text-center py-12">
-                <h3 className="text-xl font-semibold text-gray-700">
-                  No products found
-                </h3>
-                <p className="text-gray-500 mt-2">
-                  Try adjusting your filters to find what you're looking for
-                </p>
-                <button
-                  onClick={resetFilters}
-                  className="mt-4 bg-rose-600 text-white px-4 py-2 rounded-lg hover:bg-rose-700"
-                >
-                  Reset Filters
-                </button>
-              </div>
-            ) : (
-              Object.entries(groupedProducts).map(([collection, products]) => (
-                <div key={collection} className="mb-12">
-                  <CategoryPageGridStructure
-                    heading={collection}
-                    data={products}
-                  />
-                </div>
-              ))
-            )}
-          </div>
+            ))
+          )}
         </div>
+      </div>
       <Footer />
     </>
   );
