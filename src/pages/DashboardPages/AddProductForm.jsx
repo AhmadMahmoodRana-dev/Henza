@@ -5,45 +5,22 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { HexColorPicker } from "react-colorful";
 
-// Inside your component, add these states:
-
 const AddProductForm = ({ initialProduct = null }) => {
   const [currentColor, setCurrentColor] = useState("#aabbcc");
   const [showColorPicker, setShowColorPicker] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [images, setImages] = useState([]);
+  const [existingImages, setExistingImages] = useState([]);
+  const [removedImages, setRemovedImages] = useState([]);
+  const [previewUrls, setPreviewUrls] = useState([]);
+  const [isDragging, setIsDragging] = useState(false);
+  const [collectionNameOptions, setCollectionNameOptions] = useState([]);
+  const [menuNameOptions, setMenuNameOptions] = useState([]);
+  const [selectedMenuIds, setSelectedMenuIds] = useState([]);
+  const editorRef = useRef(null);
+  const navigate = useNavigate();
 
-  // Add this function to handle color addition
-  const handleAddColor = () => {
-    if (!currentColor) return;
-
-    // Remove any existing # for consistency
-    const cleanColor = currentColor.replace("#", "");
-
-    setFormData((prev) => {
-      const currentColors = prev.productColor
-        ? prev.productColor.split(",").filter((c) => c)
-        : [];
-
-      // Prevent duplicates
-      if (!currentColors.includes(`#${cleanColor}`)) {
-        return {
-          ...prev,
-          productColor: [...currentColors, `#${cleanColor}`].join(","),
-        };
-      }
-      return prev;
-    });
-  };
-
-  // Add this function to remove a color
-  const handleRemoveColor = (color) => {
-    setFormData((prev) => ({
-      ...prev,
-      productColor: prev.productColor
-        .split(",")
-        .filter((c) => c !== color)
-        .join(","),
-    }));
-  };
   const generateHenzaID = () => {
     const timestamp = Date.now();
     const random = Math.floor(Math.random() * 10000);
@@ -72,22 +49,14 @@ const AddProductForm = ({ initialProduct = null }) => {
     },
   });
 
-  const [images, setImages] = useState([]);
-  const [existingImages, setExistingImages] = useState([]); // For edit mode
-  const [removedImages, setRemovedImages] = useState([]); // Track removed images
-  const [loading, setLoading] = useState(false);
-  const [previewUrls, setPreviewUrls] = useState([]);
-  const [isDragging, setIsDragging] = useState(false);
-  const [collectionNameOptions, setCollectionNameOptions] = useState([]);
-  const [menuNameOptions, setMenuNameOptions] = useState([]);
-  const [selectedMenuIds, setSelectedMenuIds] = useState([]);
-  const editorRef = useRef(null);
-  const navigate = useNavigate();
-
   // Initialize form when initialProduct changes (edit mode)
   useEffect(() => {
     if (initialProduct) {
-      // Set form data
+      // Convert productColor to string if it's an array
+      const productColor = Array.isArray(initialProduct.productColor)
+        ? initialProduct.productColor.join(",")
+        : initialProduct.productColor || "";
+
       setFormData({
         id: initialProduct.id,
         productName: initialProduct.productName,
@@ -96,7 +65,7 @@ const AddProductForm = ({ initialProduct = null }) => {
         discount: initialProduct.discount,
         categories: initialProduct.categories,
         menu_ids: initialProduct.menu_ids,
-        productColor: initialProduct.productColor,
+        productColor: productColor, // Use converted value
         type: initialProduct.type,
         collectionName: initialProduct.collectionName,
         sizes: initialProduct.sizes,
@@ -109,13 +78,11 @@ const AddProductForm = ({ initialProduct = null }) => {
         },
       });
 
-      // Set existing images
       if (initialProduct.images && initialProduct.images.length > 0) {
         setExistingImages(initialProduct.images);
         setPreviewUrls(initialProduct.images);
       }
 
-      // Set selected menu IDs
       if (initialProduct.menu_ids) {
         const ids = initialProduct.menu_ids
           .split(",")
@@ -201,7 +168,6 @@ const AddProductForm = ({ initialProduct = null }) => {
 
   const removeImage = (index, isExisting = false) => {
     if (isExisting) {
-      // Handle existing image removal
       const removedUrl = existingImages[index];
       setRemovedImages((prev) => [...prev, removedUrl]);
 
@@ -209,7 +175,6 @@ const AddProductForm = ({ initialProduct = null }) => {
       newExisting.splice(index, 1);
       setExistingImages(newExisting);
     } else {
-      // Handle new image removal
       const newImages = [...images];
       newImages.splice(index, 1);
       setImages(newImages);
@@ -242,8 +207,71 @@ const AddProductForm = ({ initialProduct = null }) => {
     }
   };
 
+  // Add color to productColor
+  const handleAddColor = () => {
+    if (!currentColor) return;
+    const cleanColor = currentColor.replace("#", "");
+
+    setFormData((prev) => {
+      const currentColors = prev.productColor
+        ? prev.productColor.split(",").filter((c) => c)
+        : [];
+
+      if (!currentColors.includes(`#${cleanColor}`)) {
+        return {
+          ...prev,
+          productColor: [...currentColors, `#${cleanColor}`].join(","),
+        };
+      }
+      return prev;
+    });
+  };
+
+  // Remove color from productColor
+  const handleRemoveColor = (color) => {
+    setFormData((prev) => ({
+      ...prev,
+      productColor: prev.productColor
+        .split(",")
+        .filter((c) => c !== color)
+        .join(","),
+    }));
+  };
+
+  // Validate form function
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.productName.trim()) 
+      newErrors.productName = "Product name is required";
+    
+    if (!formData.productDescription.trim()) 
+      newErrors.productDescription = "Description is required";
+    
+    if (!formData.price) 
+      newErrors.price = "Price is required";
+    
+    if (!formData.collectionName) 
+      newErrors.collectionName = "Collection is required";
+    
+    if (!formData.categories) 
+      newErrors.categories = "Category is required";
+    
+    if (previewUrls.length === 0) 
+      newErrors.images = "At least one image is required";
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate form before submission
+    if (!validateForm()) {
+      toast.error("Please fill all required fields");
+      return;
+    }
 
     if (formData?.discount > 100) {
       toast.error("Discount cannot be more than 100%");
@@ -272,14 +300,12 @@ const AddProductForm = ({ initialProduct = null }) => {
     form.append("quantityAvailable", formData.inventory.quantityAvailable);
     form.append("lowStockThreshold", formData.inventory.lowStockThreshold);
 
-    // Handle images differently for edit mode
+    // Handle images for edit mode
     if (initialProduct) {
-      // Edit mode: send existing images to keep
       existingImages.forEach((img) => {
         form.append("existingImages", img);
       });
 
-      // Send removed images
       removedImages.forEach((img) => {
         form.append("removedImages", img);
       });
@@ -291,17 +317,15 @@ const AddProductForm = ({ initialProduct = null }) => {
     });
 
     try {
-      let res;
       if (initialProduct) {
-        // PUT request for update
-        res = await axios.put(
+       const res = await axios.put(
           `https://henza.zaffarsons.com/henza/update-product/${formData.id}`,
           form,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
-        navigate("/dashboard/Product");
+        console.log(res)
+        navigate("/");
       } else {
-        // POST request for new product
         res = await axios.post(
           "https://henza.zaffarsons.com/henza/add-full-product",
           form,
@@ -324,7 +348,7 @@ const AddProductForm = ({ initialProduct = null }) => {
           productDescription: "",
           price: "",
           discount: "",
-          categories: "default",
+          categories: "",
           menu_ids: "",
           productColor: "",
           type: "",
@@ -343,6 +367,7 @@ const AddProductForm = ({ initialProduct = null }) => {
         setSelectedMenuIds([]);
         setExistingImages([]);
         setRemovedImages([]);
+        setErrors({});
       }
     } catch (error) {
       console.error("Upload error:", error.response?.data || error.message);
@@ -436,48 +461,60 @@ const AddProductForm = ({ initialProduct = null }) => {
                       value={formData.productName}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                      className={`w-full px-4 py-2.5 border ${
+                        errors.productName ? "border-red-500" : "border-gray-300"
+                      } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition`}
                     />
+                    {errors.productName && (
+                      <p className="mt-1 text-sm text-red-500">{errors.productName}</p>
+                    )}
                   </div>
 
                   <div className="mt-4">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Description *
                     </label>
-                    <Editor
-                      apiKey={import.meta.env.VITE_TINYMCEKEY}
-                      onInit={(evt, editor) => (editorRef.current = editor)}
-                      value={formData.productDescription}
-                      onEditorChange={handleEditorChange}
-                      init={{
-                        height: 300,
-                        menubar: true,
-                        plugins: [
-                          "advlist autolink lists link charmap print preview anchor",
-                          "searchreplace visualblocks code fullscreen",
-                          "insertdatetime table paste code help wordcount",
-                        ],
-                        toolbar:
-                          "undo redo | formatselect | " +
-                          "bold italic backcolor | alignleft aligncenter " +
-                          "alignright alignjustify | bullist numlist outdent indent | " +
-                          "removeformat | help",
-                        content_style:
-                          "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
-                      }}
-                    />
+                    <div className={errors.productDescription ? "border border-red-500 rounded" : ""}>
+                      <Editor
+                        apiKey={import.meta.env.VITE_TINYMCEKEY}
+                        onInit={(evt, editor) => (editorRef.current = editor)}
+                        value={formData.productDescription}
+                        onEditorChange={handleEditorChange}
+                        init={{
+                          height: 300,
+                          menubar: true,
+                          plugins: [
+                            "advlist autolink lists link charmap print preview anchor",
+                            "searchreplace visualblocks code fullscreen",
+                            "insertdatetime table paste code help wordcount",
+                          ],
+                          toolbar:
+                            "undo redo | formatselect | " +
+                            "bold italic backcolor | alignleft aligncenter " +
+                            "alignright alignjustify | bullist numlist outdent indent | " +
+                            "removeformat | help",
+                          content_style:
+                            "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                        }}
+                      />
+                    </div>
+                    {errors.productDescription && (
+                      <p className="mt-1 text-sm text-red-500">{errors.productDescription}</p>
+                    )}
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Collection
+                      Collection *
                     </label>
                     <select
                       name="collectionName"
                       value={formData.collectionName}
                       onChange={handleChange}
                       required
-                      className=" w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition outline-none"
+                      className={`w-full px-4 py-2.5 border ${
+                        errors.collectionName ? "border-red-500" : "border-gray-300"
+                      } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition outline-none`}
                     >
                       <option value="" disabled>
                         Select a collection
@@ -493,6 +530,32 @@ const AddProductForm = ({ initialProduct = null }) => {
                         );
                       })}
                     </select>
+                    {errors.collectionName && (
+                      <p className="mt-1 text-sm text-red-500">{errors.collectionName}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Category *
+                    </label>
+                    <select
+                      name="categories"
+                      value={formData.categories}
+                      onChange={handleChange}
+                      required
+                      className={`w-full px-4 py-2.5 border ${
+                        errors.categories ? "border-red-500" : "border-gray-300"
+                      } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition`}
+                    >
+                      <option value="" disabled>Select a category</option>
+                      <option value="Men">Men</option>
+                      <option value="Women">Women</option>
+                      <option value="Kids">Kids</option>
+                    </select>
+                    {errors.categories && (
+                      <p className="mt-1 text-sm text-red-500">{errors.categories}</p>
+                    )}
                   </div>
 
                   <div>
@@ -536,8 +599,13 @@ const AddProductForm = ({ initialProduct = null }) => {
                         required
                         min="0"
                         step="0.01"
-                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                        className={`w-full px-4 py-2.5 border ${
+                          errors.price ? "border-red-500" : "border-gray-300"
+                        } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition`}
                       />
+                      {errors.price && (
+                        <p className="mt-1 text-sm text-red-500">{errors.price}</p>
+                      )}
                     </div>
 
                     <div>
@@ -575,7 +643,7 @@ const AddProductForm = ({ initialProduct = null }) => {
                     <div className="mb-2">
                       <div className="flex flex-wrap gap-2">
                         {formData.productColor &&
-                          formData.productColor
+                          String(formData.productColor)
                             .split(",")
                             .filter((c) => c)
                             .map((color, idx) => (
@@ -876,6 +944,9 @@ const AddProductForm = ({ initialProduct = null }) => {
                     })}
                   </div>
                 </div>
+              )}
+              {errors.images && (
+                <p className="mt-2 text-sm text-red-500">{errors.images}</p>
               )}
             </div>
 
