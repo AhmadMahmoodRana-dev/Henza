@@ -3,8 +3,47 @@ import axios from "axios";
 import { Editor } from "@tinymce/tinymce-react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { HexColorPicker } from "react-colorful";
+
+// Inside your component, add these states:
 
 const AddProductForm = ({ initialProduct = null }) => {
+  const [currentColor, setCurrentColor] = useState("#aabbcc");
+  const [showColorPicker, setShowColorPicker] = useState(false);
+
+  // Add this function to handle color addition
+  const handleAddColor = () => {
+    if (!currentColor) return;
+
+    // Remove any existing # for consistency
+    const cleanColor = currentColor.replace("#", "");
+
+    setFormData((prev) => {
+      const currentColors = prev.productColor
+        ? prev.productColor.split(",").filter((c) => c)
+        : [];
+
+      // Prevent duplicates
+      if (!currentColors.includes(`#${cleanColor}`)) {
+        return {
+          ...prev,
+          productColor: [...currentColors, `#${cleanColor}`].join(","),
+        };
+      }
+      return prev;
+    });
+  };
+
+  // Add this function to remove a color
+  const handleRemoveColor = (color) => {
+    setFormData((prev) => ({
+      ...prev,
+      productColor: prev.productColor
+        .split(",")
+        .filter((c) => c !== color)
+        .join(","),
+    }));
+  };
   const generateHenzaID = () => {
     const timestamp = Date.now();
     const random = Math.floor(Math.random() * 10000);
@@ -531,15 +570,95 @@ const AddProductForm = ({ initialProduct = null }) => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Available Colors
                     </label>
-                    <input
-                      name="productColor"
-                      placeholder="e.g., Red, Blue, Green"
-                      value={formData.productColor}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                    />
+
+                    {/* Color display and management */}
+                    <div className="mb-2">
+                      <div className="flex flex-wrap gap-2">
+                        {formData.productColor &&
+                          formData.productColor
+                            .split(",")
+                            .filter((c) => c)
+                            .map((color, idx) => (
+                              <div
+                                key={idx}
+                                className="flex items-center gap-1 px-2 py-1 rounded-md text-xs"
+                                style={{
+                                  backgroundColor: `${color}20`,
+                                  border: `1px solid ${color}`,
+                                }}
+                              >
+                                <div
+                                  className="w-4 h-4 rounded-full border border-gray-300"
+                                  style={{ backgroundColor: color }}
+                                ></div>
+                                <span>{color}</span>
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveColor(color)}
+                                  className="text-gray-500 hover:text-red-500"
+                                >
+                                  ×
+                                </button>
+                              </div>
+                            ))}
+                      </div>
+                    </div>
+
+                    {/* Color picker UI */}
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() => setShowColorPicker(!showColorPicker)}
+                        className="flex items-center gap-2 mb-2 text-sm text-blue-600 hover:text-blue-800"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                        Add Color
+                      </button>
+
+                      {showColorPicker && (
+                        <div className="absolute z-10 bg-white p-4 rounded-lg shadow-lg border border-gray-200">
+                          <HexColorPicker
+                            color={currentColor}
+                            onChange={setCurrentColor}
+                            className="mb-3"
+                          />
+
+                          <div className="flex items-center gap-2">
+                            <div
+                              className="w-8 h-8 rounded border border-gray-300"
+                              style={{ backgroundColor: currentColor }}
+                            ></div>
+                            <input
+                              type="text"
+                              value={currentColor}
+                              onChange={(e) => setCurrentColor(e.target.value)}
+                              className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
+                            />
+                            <button
+                              type="button"
+                              onClick={handleAddColor}
+                              className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
+                            >
+                              Add
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
                     <p className="mt-1 text-xs text-gray-500">
-                      Separate multiple colors with commas
+                      Selected colors will appear above
                     </p>
                   </div>
 
