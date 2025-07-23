@@ -2,8 +2,21 @@ import HomePageMainCarousel from "../components/Home/HomePageMainCarousel";
 import CategoryPageGridStructure from "../components/Home/CategoryPageGridStructure";
 import Footer from "../components/Footer/Footer";
 import axios from "axios";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, Fragment } from "react";
 import { useParams } from "react-router-dom";
+import { Listbox } from "@headlessui/react";
+import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
+
+const sortOptions = [
+  { value: "featured", label: "Featured" },
+  { value: "best-selling", label: "Best selling" },
+  { value: "az", label: "Alphabetically, A-Z" },
+  { value: "za", label: "Alphabetically, Z-A" },
+  { value: "low-to-high", label: "Price, low to high" },
+  { value: "high-to-low", label: "Price, high to low" },
+  { value: "old-to-new", label: "Date, old to new" },
+  { value: "new-to-old", label: "Date, new to old" },
+];
 
 const MenuPage = () => {
   const [allProductData, setAllProductData] = useState([]);
@@ -96,24 +109,42 @@ const MenuPage = () => {
     <>
       <div className="w-full min-h-screen xl:px-16 lg:px-12 md:px-10 sm:px-8 px-4">
         {/* <HomePageMainCarousel /> */}
-        <h2 className="text-2xl font-semibold border-b border-gray-300 py-6">{name}</h2>
+        <h2 className="text-2xl font-semibold border-b border-gray-300 py-6 text-center">{name}</h2>
 
         <div className="flex justify-between items-center mb-6 mt-6">
-        <h2></h2>
-          <select
-            value={sortOption}
-            onChange={(e) => setSortOption(e.target.value)}
-            className="border border-gray-300 rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-rose-600"
-          >
-            <option value="featured">Featured</option>
-            <option value="best-selling">Best selling</option>
-            <option value="az">Alphabetically, A-Z</option>
-            <option value="za">Alphabetically, Z-A</option>
-            <option value="low-to-high">Price, low to high</option>
-            <option value="high-to-low">Price, high to low</option>
-            <option value="old-to-new">Date, old to new</option>
-            <option value="new-to-old">Date, new to old</option>
-          </select>
+          <h2></h2>
+
+          <Listbox value={sortOption} onChange={setSortOption}>
+            <div className="relative w-60 text-sm">
+              <Listbox.Button className="relative w-full cursor-default rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-600">
+                <span className="block truncate">
+                  {sortOptions.find((option) => option.value === sortOption)?.label}
+                </span>
+                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                  <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                </span>
+              </Listbox.Button>
+              <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                {sortOptions.map((option) => (
+                  <Listbox.Option
+                    key={option.value}
+                    value={option.value}
+                    className={({ active, selected }) =>
+                      `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                        active ? "bg-rose-100 text-rose-900" : "text-gray-900"
+                      } ${selected ? "bg-rose-200 font-semibold" : ""}`
+                    }
+                  >
+                    {({ selected }) => (
+                      <span className={`block truncate ${selected ? "font-semibold" : ""}`}>
+                        {option.label}
+                      </span>
+                    )}
+                  </Listbox.Option>
+                ))}
+              </Listbox.Options>
+            </div>
+          </Listbox>
         </div>
 
         <div className="w-full">

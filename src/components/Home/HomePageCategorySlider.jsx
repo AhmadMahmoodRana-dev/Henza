@@ -1,26 +1,29 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import SliderCard from "./SliderCard";
 import { IoIosArrowBack } from "react-icons/io";
 import axios from "axios";
 
-const HomePageCategorySlider = ({heading}) => {
-  const [products,setProducts] = useState([])
-
-const getCollection = async () => {
-  try {
-const { data } = await axios.get("https://henza.zaffarsons.com/henza/Collection");
-      setProducts(data);  } catch (error) {
-    
-  }
-}
-
-useEffect(() =>{
-  getCollection()
-})
-
-
+const HomePageCategorySlider = ({ heading }) => {
+  const [products, setProducts] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [perSlide, setPerSlide] = useState(1);
+  const gapRem = 1; // 1rem = 16px
+  const containerRef = useRef(null);
+
+  const getCollection = async () => {
+    try {
+      const { data } = await axios.get(
+        "https://henza.zaffarsons.com/henza/Collection"
+      );
+      setProducts(data);
+    } catch (error) {
+      console.error("Error fetching collections:", error);
+    }
+  };
+
+  useEffect(() => {
+    getCollection();
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -29,8 +32,7 @@ useEffect(() =>{
       else if (width >= 1280) setPerSlide(4);
       else if (width >= 1024) setPerSlide(3);
       else if (width >= 768) setPerSlide(2);
-      else if (width >= 640) setPerSlide(1.5);
-      else setPerSlide(1.5);
+      else setPerSlide(1);
     };
 
     handleResize();
@@ -39,52 +41,60 @@ useEffect(() =>{
   }, []);
 
   useEffect(() => {
+    if (!containerRef.current || products.length === 0) return;
+    
     let id;
-    const container = document.querySelector(".carousel-container");
     const pause = () => clearInterval(id);
     const resume = () => {
       id = setInterval(() => {
-        setCurrentIndex((i) =>
-          i + 1 + perSlide <= products.length ? i + 1 : 0
+        setCurrentIndex(prev => 
+          prev + 1 <= Math.ceil(products.length - perSlide) ? prev + 1 : 0
         );
       }, 3000);
     };
 
     resume();
-    container?.addEventListener("mouseenter", pause);
-    container?.addEventListener("mouseleave", resume);
+    containerRef.current.addEventListener("mouseenter", pause);
+    containerRef.current.addEventListener("mouseleave", resume);
 
     return () => {
       clearInterval(id);
-      container?.removeEventListener("mouseenter", pause);
-      container?.removeEventListener("mouseleave", resume);
+      containerRef.current?.removeEventListener("mouseenter", pause);
+      containerRef.current?.removeEventListener("mouseleave", resume);
     };
   }, [perSlide, products.length]);
 
   const prev = () => {
-    setCurrentIndex((i) =>
-      i > 0 ? i - 1 : Math.max(products.length - perSlide, 0)
+    setCurrentIndex(prev => 
+      prev > 0 ? prev - 1 : Math.max(products.length - perSlide, 0)
     );
   };
 
   const next = () => {
-    setCurrentIndex((i) => (i + perSlide < products.length ? i + 1 : 0));
+    setCurrentIndex(prev => 
+      prev + 1 <= Math.ceil(products.length - perSlide) ? prev + 1 : 0
+    );
   };
 
+  // Calculate the percentage to shift
   const shiftPercent = (100 / products.length) * currentIndex;
 
   return (
     <div className="w-full flex flex-col md:flex-row items-center justify-center gap-4 px-4 sm:px-8 lg:px-16">
-      <h1 className="font-bold md:mt-0 mt-5 text-3xl sm:text-4xl lg:text-4xl xl:text-5xl tracking-widest text-center md:text-left">
+      <h1 className="font-bold md:mt-0 mt-5 text-2xl sm:text-3xl lg:text-3xl xl:text-4xl tracking-widest text-center md:text-left">
         {heading}
       </h1>
-      <div className="relative w-full overflow-hidden py-4 carousel-container">
+
+      <div 
+        ref={containerRef}
+        className="relative w-full overflow-hidden py-4 carousel-container"
+      >
         <div className="overflow-hidden w-full">
           <div
             className="flex transition-transform duration-500 ease-in-out"
             style={{
-              width: `${(products.length * 100) / perSlide}%`,
-              transform: `translateX(-${shiftPercent}%)`,
+              gap: `${gapRem}rem`,
+              transform: `translateX(calc(-${shiftPercent}% - ${currentIndex * gapRem}rem))`,
             }}
           >
             {products.map((p) => (
@@ -92,12 +102,15 @@ useEffect(() =>{
                 key={p.id}
                 className="flex-shrink-0 flex justify-center"
                 style={{
-                  width: `${100 / products.length}%`,
-                  maxWidth: `${100 / perSlide}%`,
+                  width: `calc(${100 / perSlide}% - ${gapRem}rem)`,
                 }}
               >
-                <div className="w-full px-2">
-                  <SliderCard name={p.VALUE_SET_DESCRIPTION} image={p.image} link={p.link} />
+                <div className="w-full px-2 md:px-4">
+                  <SliderCard
+                    name={p.VALUE_SET_DESCRIPTION}
+                    image={p.image}
+                    link={p.link}
+                  />
                 </div>
               </div>
             ))}

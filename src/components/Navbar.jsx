@@ -37,7 +37,7 @@ const Navbar = () => {
 
   // Desktop Dropdown Component
   const DesktopDropdown = ({ menu }) => (
-    <div className="fixed top-20 bg-white shadow-lg p-6 z-50 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-all duration-300 w-[700px] rounded">
+    <div className="fixed top-20 bg-[#f3f3f3] shadow-lg p-6 z-50 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-all duration-300 w-[700px] rounded">
       <div className="grid grid-cols-4 gap-6">
         {menu.children.map((child) => (
           <div key={child.id}>
@@ -194,7 +194,7 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden absolute top-20 left-0 w-full bg-white shadow-md z-20">
+          <div className="md:hidden absolute top-20 left-0 w-full bg-[#f3f3f3] shadow-md z-20">
             <div className="px-4 py-2">
               {!loading && <MobileMenuTree nodes={menuTree} />}
 
