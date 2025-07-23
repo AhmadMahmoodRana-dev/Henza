@@ -28,8 +28,8 @@ const HomePageCategorySlider = ({ heading }) => {
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
-      if (width >= 1536) setPerSlide(5);
-      else if (width >= 1280) setPerSlide(4);
+      if (width >= 1536) setPerSlide(7);
+      else if (width >= 1280) setPerSlide(6);
       else if (width >= 1024) setPerSlide(3);
       else if (width >= 768) setPerSlide(2);
       else setPerSlide(1);
@@ -81,10 +81,7 @@ const HomePageCategorySlider = ({ heading }) => {
 
   return (
     <div className="w-full flex flex-col md:flex-row items-center justify-center gap-4 px-4 sm:px-8 lg:px-16">
-      <h1 className="font-bold md:mt-0 mt-5 text-2xl sm:text-3xl lg:text-3xl xl:text-4xl tracking-widest text-center md:text-left">
-        {heading}
-      </h1>
-
+     
       <div 
         ref={containerRef}
         className="relative w-full overflow-hidden py-4 carousel-container"

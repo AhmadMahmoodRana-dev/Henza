@@ -43,7 +43,7 @@ const Navbar = () => {
           <div key={child.id}>
             <Link
               to={`/menuPages/${child?.name}/${child?.id}`}
-              className="font-bold mb-2 uppercase hover:text-[#fc2743]"
+              className="font-light text-gray-800 tracking-wide mb-2 uppercase hover:text-[#fc2743]"
             >
               {child.name}
             </Link>
@@ -70,7 +70,7 @@ const Navbar = () => {
           {node.children.length > 0 ? (
             <>
               <button
-                className="w-full flex justify-between items-center py-3 hover:text-[#fc2743]"
+                className="w-full flex justify-between items-center  py-3 hover:text-[#fc2743]"
                 onClick={() => toggleMenuExpansion(node.id)}
               >
                 {node.name}
@@ -110,7 +110,7 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex space-x-6 font-semibold">
+          <div className="hidden md:flex space-x-6 font-light text-gray-800 tracking-wide">
             <Link to={"/"} className="hover:text-[#fc2743]">
               HOME
             </Link>

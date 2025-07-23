@@ -3,14 +3,15 @@ import { IoBagAddOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
 
 const MensWearSliderAndBasicCard = ({ index, item }) => {
-const getDiscountPercentage = (originalPrice, discountAmount) => {
-  if (!originalPrice || originalPrice === 0) return 0;
-  return (discountAmount / originalPrice) * 100;
-};
+  const getDiscountPercentage = (originalPrice, discountAmount) => {
+    if (!originalPrice || originalPrice === 0) return 0;
+    return (discountAmount / originalPrice) * 100;
+  };
 
-
-
-const percentage = getDiscountPercentage(item?.price, item?.discount);
+  const hasDiscount = item?.discount > 0;
+  const percentage = hasDiscount
+    ? getDiscountPercentage(item?.price, item?.discount)
+    : 0;
 
   return (
     <Link
@@ -25,7 +26,7 @@ const percentage = getDiscountPercentage(item?.price, item?.discount);
           className="w-full h-full object-cover rounded-t-lg"
         />
 
-        {percentage && (
+        {hasDiscount && (
           <span className="absolute top-2 left-2 bg-[#fc2743] text-white text-sm px-2 py-1 rounded">
             {percentage.toFixed(2)}%
           </span>
@@ -48,19 +49,22 @@ const percentage = getDiscountPercentage(item?.price, item?.discount);
           {item?.productName}
         </p>
         <div className="flex gap-4">
-          <p className="text-md line-through text-[#000000] font-semibold">
-            PKR {item?.price?.toLocaleString() || 0}
-          </p>
-          <p className="text-md text-[#fc2743] font-semibold">
-            PKR {(item?.price - item?.discount)?.toLocaleString()}
+          {hasDiscount && (
+            <p className="text-md line-through text-[#000000] font-semibold">
+              PKR {item?.price?.toLocaleString() || 0}
+            </p>
+          )}
+          <p
+            className={`text-md font-semibold ${
+              hasDiscount ? "text-[#fc2743]" : "text-[#fc2743]"
+            }`}
+          >
+            PKR{" "}
+            {hasDiscount
+              ? (item?.price - item?.discount)?.toLocaleString()
+              : item?.price?.toLocaleString()}
           </p>
         </div>
-        {/* Uncomment this if needed */}
-        {/* {product.express && (
-          <span className="mt-2 inline-block bg-blue-500 text-white text-xs px-2 py-1 rounded">
-            ⚡ Express
-          </span>
-        )} */}
       </div>
     </Link>
   );
