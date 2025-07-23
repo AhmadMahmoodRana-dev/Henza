@@ -4,11 +4,7 @@ import {
   FaPlus,
   FaHeart,
   FaFacebookF,
-  FaTwitter,
-  FaPinterest,
-  FaInstagram,
   FaWhatsapp,
-  FaLinkedinIn,
 } from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
 import { Context } from "../Context/Context";
@@ -22,11 +18,10 @@ const ProductDetail = () => {
   const [productImages, setProductsImages] = useState([]);
   const [currentImage, setCurrentImage] = useState("");
   const [color, setColor] = useState("");
+  const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const { setOpenCart } = useContext(Context);
-
-  console.log("SINFLE DATA", singleData);
 
   // States for zoom functionality
   const [showZoom, setShowZoom] = useState(false);
@@ -43,6 +38,11 @@ const ProductDetail = () => {
       setProductsImages(data?.images || []);
       setCurrentImage(data?.images?.[0] || "");
       setColor(data?.productColor?.[0] || "");
+      
+      // Initialize selected size if sizes exist
+      if (data?.sizes?.length > 0) {
+        setSelectedSize(data.sizes[0]);
+      }
     } catch (error) {
       console.error("Failed to fetch product:", error);
     }
@@ -50,9 +50,12 @@ const ProductDetail = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [id]);
 
   const handleAddToCart = () => {
+    // Fallback to first image if currentImage is empty
+    const productImage = currentImage || productImages[0] || "";
+    
     const selectedProduct = {
       id: singleData.id,
       name: singleData.productName,
@@ -61,8 +64,10 @@ const ProductDetail = () => {
           ? singleData.price - singleData.discount
           : singleData.price,
       color: color,
+      size: selectedSize, // Include selected size
       quantity: quantity,
-      image: currentImage,
+      image: productImage, // Use fallback image
+      sku: singleData?.inventory?.SKU || ""
     };
 
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -120,7 +125,11 @@ const ProductDetail = () => {
               <button
                 key={index}
                 onClick={() => setCurrentImage(img)}
-                className="aspect-[3/4] w-full rounded-lg border hover:border-gray-400 overflow-hidden"
+                className={`aspect-[3/4] w-full rounded-lg overflow-hidden ${
+                  currentImage === img
+                    ? "border-2 border-black"
+                    : "border border-gray-200"
+                }`}
               >
                 <img
                   src={img}
@@ -141,7 +150,7 @@ const ProductDetail = () => {
               ref={imageRef}
             >
               <img
-                src={currentImage}
+                src={currentImage || productImages[0]}
                 alt="Product"
                 className="w-full h-full object-cover"
               />
@@ -165,7 +174,7 @@ const ProductDetail = () => {
                 <div
                   className="absolute inset-0 w-full h-full z-0"
                   style={{
-                    backgroundImage: `url(${currentImage})`,
+                    backgroundImage: `url(${currentImage || productImages[0]})`,
                     backgroundRepeat: "no-repeat",
                     backgroundPosition: zoomBackgroundPosition,
                     backgroundSize: "200%",
@@ -210,7 +219,7 @@ const ProductDetail = () => {
               )}
             </div>
 
-            <p className="text-sm text-gray-400*: mb-4 tracking-widest">
+            <p className="text-sm text-gray-500 mb-4 tracking-widest">
               Item : {singleData?.type}
             </p>
           </div>
@@ -219,11 +228,16 @@ const ProductDetail = () => {
           {singleData?.sizes?.length > 0 && (
             <div>
               <h3 className="text-base font-medium text-gray-700 mb-2">Size</h3>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 {singleData?.sizes?.map((size) => (
                   <button
                     key={size}
-                    className="w-12 h-12 border text-sm rounded-md hover:border-black"
+                    onClick={() => setSelectedSize(size)}
+                    className={`min-w-12 h-12 px-3 border text-sm rounded-md transition-all ${
+                      selectedSize === size
+                        ? "bg-black text-white border-black"
+                        : "border-gray-300 hover:border-gray-500"
+                    }`}
                   >
                     {size}
                   </button>
@@ -240,7 +254,7 @@ const ProductDetail = () => {
                 <button
                   key={c}
                   onClick={() => setColor(c)}
-                  className={`w-8 h-8 rounded-full border-2 ${
+                  className={`w-8 h-8 rounded-full border-2 transition-all ${
                     color === c
                       ? "border-rose-500 ring-2 ring-rose-200"
                       : "border-gray-200 hover:border-gray-400"
@@ -258,14 +272,14 @@ const ProductDetail = () => {
             <div className="flex items-center gap-2 border rounded-full px-4 py-2">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="text-gray-600"
+                className="text-gray-600 hover:text-black transition-colors"
               >
                 <FaMinus />
               </button>
-              <span>{quantity}</span>
+              <span className="min-w-[20px] text-center">{quantity}</span>
               <button
                 onClick={() => setQuantity(quantity + 1)}
-                className="text-gray-600"
+                className="text-gray-600 hover:text-black transition-colors"
               >
                 <FaPlus />
               </button>
@@ -276,13 +290,13 @@ const ProductDetail = () => {
           <div className="flex flex-col sm:flex-row gap-4">
             <button
               onClick={handleAddToCart}
-              className="flex-1 py-1 text-lg text-white bg-black hover:bg-gray-800 rounded-lg transition-colors"
+              className="flex-1 py-3 text-lg text-white bg-black hover:bg-gray-800 rounded-lg transition-colors"
             >
               Add to Cart
             </button>
             <Link
               to="/checkout"
-              className="flex-1 py-1 text-lg text-black border border-gray-400 rounded-lg text-center hover:bg-gray-100 transition-colors"
+              className="flex-1 py-3 text-lg text-black border border-gray-400 rounded-lg text-center hover:bg-gray-100 transition-colors"
             >
               Buy Now
             </Link>
@@ -291,11 +305,11 @@ const ProductDetail = () => {
           {/* Wishlist */}
           <button
             onClick={() => setIsWishlisted(!isWishlisted)}
-            className="w-full py-2 text-sm rounded-lg border border-gray-300 hover:border-rose-400 flex justify-center items-center gap-2 transition-colors"
+            className="w-full py-3 text-sm rounded-lg border border-gray-300 hover:border-rose-400 flex justify-center items-center gap-2 transition-colors"
           >
             <FaHeart
-              className={`h-4 w-4 ${
-                isWishlisted ? "text-rose-500 fill-current" : ""
+              className={`h-4 w-4 transition-colors ${
+                isWishlisted ? "text-rose-500 fill-current" : "text-gray-400"
               }`}
             />
             {isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
@@ -322,26 +336,18 @@ const ProductDetail = () => {
               Share This Product
             </h3>
             <div className="flex gap-3">
-              {[
-                {
-                  icon: FaFacebookF,
-                  platform: "facebook",
-                  color: "bg-blue-600",
-                },
-                {
-                  icon: FaWhatsapp,
-                  platform: "whatsapp",
-                  color: "bg-green-500",
-                },
-              ].map((social, index) => (
-                <button
-                  key={index}
-                  onClick={() => shareProduct(social.platform)}
-                  className={`p-2 rounded-full text-white ${social.color} hover:opacity-90 transition-opacity`}
-                >
-                  <social.icon className="h-4 w-4" />
-                </button>
-              ))}
+              <button
+                onClick={() => shareProduct("facebook")}
+                className="p-3 rounded-full text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+              >
+                <FaFacebookF className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => shareProduct("whatsapp")}
+                className="p-3 rounded-full text-white bg-green-500 hover:bg-green-600 transition-colors"
+              >
+                <FaWhatsapp className="h-4 w-4" />
+              </button>
             </div>
           </div>
         </div>
