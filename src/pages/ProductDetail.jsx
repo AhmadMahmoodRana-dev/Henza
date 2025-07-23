@@ -204,7 +204,7 @@ const ProductDetail = () => {
             </p>
             <div className="flex gap-4">
               <p
-                className={`text-xl font-semibold text-black mb-4 ${
+                className={`text-xl font-semibold ${singleData?.discount > 0 ? "text-black" : "text-rose-600"}  mb-4 ${
                   singleData?.discount > 0 ? "line-through" : ""
                 }`}
               >
