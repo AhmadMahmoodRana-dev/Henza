@@ -171,6 +171,12 @@ const AddCategoryPage = () => {
             </label>
           </div>
         </div>
+        <div className="mb-8 flex items-center gap-4 bg-[#ffe4e6] py-2 px-4 rounded-2xl">
+                <div className="bg-[#c93638] rounded-full w-2 h-2" />
+                <p className="text-sm text-[#c93638]">
+                  Image size must be 300X300 pixels or smaller.
+                </p>
+              </div>
 
         <div className="mb-4">
           <label className="block text-gray-700 mb-2" htmlFor="image">

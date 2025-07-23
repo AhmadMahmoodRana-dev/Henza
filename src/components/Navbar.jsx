@@ -1,6 +1,6 @@
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { useState, useEffect, useContext } from "react";
-import { FaUser,FaSearch, FaTimes } from "react-icons/fa";
+import { FaUser, FaSearch, FaTimes } from "react-icons/fa";
 import { FaShopify } from "react-icons/fa";
 import { Context } from "../Context/Context";
 import logo from "../assets/logo.jpg";
@@ -12,7 +12,7 @@ const Navbar = () => {
   const [expandedMenus, setExpandedMenus] = useState({});
   const [isMobile, setIsMobile] = useState(false);
   const { openCart, setOpenCart } = useContext(Context);
-  const { menuTree, loading } = useMenu(); 
+  const { menuTree, loading } = useMenu();
 
   useEffect(() => {
     const handleResize = () => {
@@ -37,7 +37,7 @@ const Navbar = () => {
 
   // Desktop Dropdown Component
   const DesktopDropdown = ({ menu }) => (
-    <div className="fixed top-20 bg-[#f3f3f3] shadow-lg p-6 z-50 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-all duration-300 w-[700px] rounded">
+    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 bg-[#f3f3f3] shadow-lg p-6 z-50 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-all duration-300 w-[700px] rounded">
       <div className="grid grid-cols-4 gap-6">
         {menu.children.map((child) => (
           <div key={child.id}>
@@ -53,7 +53,7 @@ const Navbar = () => {
                 to={grandchild.url || "#"}
                 className="block mb-1 hover:text-[#fc2743]"
               >
-                {grandchild.name}1
+                {grandchild.name}
               </Link>
             ))}
           </div>
@@ -116,7 +116,10 @@ const Navbar = () => {
             </Link>
             {!loading &&
               menuTree.map((menu) => (
-                <div key={menu.id} className="relative group pb-2">
+                <div
+                  key={menu.id}
+                  className="relative group pb-2 flex justify-center"
+                >
                   {menu.children.length > 0 ? (
                     <>
                       <button className="flex items-center hover:text-[#fc2743] uppercase">
