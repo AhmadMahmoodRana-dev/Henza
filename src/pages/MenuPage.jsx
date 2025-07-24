@@ -35,7 +35,10 @@ const MenuPage = () => {
         const { data } = await axios.get(
           `https://henza.zaffarsons.com/henza/get-products-by-menu/${menuId}`
         );
-        setAllProductData(data);
+        const activeProducts = data.filter(
+        (product) => product?.inventory?.active === true
+      );
+        setAllProductData(activeProducts);
       } catch (error) {
         console.error(error);
       } finally {

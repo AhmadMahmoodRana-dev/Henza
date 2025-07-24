@@ -13,7 +13,10 @@ const Home = () => {
       const { data } = await axios.get(
         `https://henza.zaffarsons.com/henza/get-all-products`
       );
-      setAllProductData(data);
+      const activeProducts = data.filter(
+        (product) => product?.inventory?.active === true
+      );
+      setAllProductData(activeProducts);
       console.log("ALL PRODUCT DATA", data);
     } catch (error) {
       console.error(error);
@@ -41,7 +44,7 @@ const Home = () => {
         {/* <HomePageGridStructure heading={"Shop Luxury Picks"} /> */}
         {Object.entries(groupedProducts).map(([collection, products]) => (
           <div key={collection}>
-                <HomePageGridStructure heading={collection} data={products} />
+            <HomePageGridStructure heading={collection} data={products} />
           </div>
         ))}
         {/* <HomePageGridStructure heading={"Buy Festive Glam"} /> */}

@@ -23,7 +23,7 @@ import CollectionPage from "./pages/CollectionPage";
 export default function App() {
   return (
     <div>
-      <ScrollToHash />
+      {/* <ScrollToHash />
       <Routes>
         <Route element={<PublicRoutes />}>
           <Route path="/login" element={<Login />} />
@@ -39,7 +39,6 @@ export default function App() {
           <Route path="/menuPages/:name/:menuId" element={<MenuPage />} />
           <Route path="/collection/:name" element={<CollectionPage />} />
         </Route>
-        {/* Dashboard Routes */}
         <Route path="/dashboard" element={<DashboardRoutes />}>
           <Route index element={<h1>Dashboard Home</h1>} />
           <Route path="add-product" element={<AddProductForm/>} />
@@ -52,7 +51,7 @@ export default function App() {
           <Route path="add-collection/:id" element={<AddCategoryPage/>} />
           <Route path="Menu" element={<MenuManager/>} />
         </Route>
-      </Routes>
+      </Routes> */}
     </div>
   );
 }
