@@ -241,25 +241,23 @@ const AddProductForm = ({ initialProduct = null }) => {
   // Validate form function
   const validateForm = () => {
     const newErrors = {};
-    
-    if (!formData.productName.trim()) 
+
+    if (!formData.productName.trim())
       newErrors.productName = "Product name is required";
-    
-    if (!formData.productDescription.trim()) 
+
+    if (!formData.productDescription.trim())
       newErrors.productDescription = "Description is required";
-    
-    if (!formData.price) 
-      newErrors.price = "Price is required";
-    
-    if (!formData.collectionName) 
+
+    if (!formData.price) newErrors.price = "Price is required";
+
+    if (!formData.collectionName)
       newErrors.collectionName = "Collection is required";
-    
-    if (!formData.categories) 
-      newErrors.categories = "Category is required";
-    
-    if (previewUrls.length === 0) 
+
+    if (!formData.categories) newErrors.categories = "Category is required";
+
+    if (previewUrls.length === 0)
       newErrors.images = "At least one image is required";
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -318,20 +316,22 @@ const AddProductForm = ({ initialProduct = null }) => {
 
     try {
       if (initialProduct) {
-       const res = await axios.put(
+        const res = await axios.put(
           `https://henza.zaffarsons.com/henza/update-product/${formData.id}`,
           form,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
-        console.log(res)
+        console.log(res);
         navigate("/");
       } else {
-        res = await axios.post(
+        const res = await axios.post(
           "https://henza.zaffarsons.com/henza/add-full-product",
           form,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
+        console.log(res);
       }
+      navigate("/");
 
       toast.success(
         initialProduct
@@ -462,11 +462,15 @@ const AddProductForm = ({ initialProduct = null }) => {
                       onChange={handleChange}
                       required
                       className={`w-full px-4 py-2.5 border ${
-                        errors.productName ? "border-red-500" : "border-gray-300"
+                        errors.productName
+                          ? "border-red-500"
+                          : "border-gray-300"
                       } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition`}
                     />
                     {errors.productName && (
-                      <p className="mt-1 text-sm text-red-500">{errors.productName}</p>
+                      <p className="mt-1 text-sm text-red-500">
+                        {errors.productName}
+                      </p>
                     )}
                   </div>
 
@@ -474,7 +478,13 @@ const AddProductForm = ({ initialProduct = null }) => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Description *
                     </label>
-                    <div className={errors.productDescription ? "border border-red-500 rounded" : ""}>
+                    <div
+                      className={
+                        errors.productDescription
+                          ? "border border-red-500 rounded"
+                          : ""
+                      }
+                    >
                       <Editor
                         apiKey={import.meta.env.VITE_TINYMCEKEY}
                         onInit={(evt, editor) => (editorRef.current = editor)}
@@ -499,7 +509,9 @@ const AddProductForm = ({ initialProduct = null }) => {
                       />
                     </div>
                     {errors.productDescription && (
-                      <p className="mt-1 text-sm text-red-500">{errors.productDescription}</p>
+                      <p className="mt-1 text-sm text-red-500">
+                        {errors.productDescription}
+                      </p>
                     )}
                   </div>
 
@@ -513,7 +525,9 @@ const AddProductForm = ({ initialProduct = null }) => {
                       onChange={handleChange}
                       required
                       className={`w-full px-4 py-2.5 border ${
-                        errors.collectionName ? "border-red-500" : "border-gray-300"
+                        errors.collectionName
+                          ? "border-red-500"
+                          : "border-gray-300"
                       } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition outline-none`}
                     >
                       <option value="" disabled>
@@ -531,7 +545,9 @@ const AddProductForm = ({ initialProduct = null }) => {
                       })}
                     </select>
                     {errors.collectionName && (
-                      <p className="mt-1 text-sm text-red-500">{errors.collectionName}</p>
+                      <p className="mt-1 text-sm text-red-500">
+                        {errors.collectionName}
+                      </p>
                     )}
                   </div>
 
@@ -548,13 +564,17 @@ const AddProductForm = ({ initialProduct = null }) => {
                         errors.categories ? "border-red-500" : "border-gray-300"
                       } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition`}
                     >
-                      <option value="" disabled>Select a category</option>
+                      <option value="" disabled>
+                        Select a category
+                      </option>
                       <option value="Men">Men</option>
                       <option value="Women">Women</option>
                       <option value="Kids">Kids</option>
                     </select>
                     {errors.categories && (
-                      <p className="mt-1 text-sm text-red-500">{errors.categories}</p>
+                      <p className="mt-1 text-sm text-red-500">
+                        {errors.categories}
+                      </p>
                     )}
                   </div>
 
@@ -588,7 +608,7 @@ const AddProductForm = ({ initialProduct = null }) => {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Price ($) *
+                        Price
                       </label>
                       <input
                         name="price"
@@ -604,13 +624,15 @@ const AddProductForm = ({ initialProduct = null }) => {
                         } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition`}
                       />
                       {errors.price && (
-                        <p className="mt-1 text-sm text-red-500">{errors.price}</p>
+                        <p className="mt-1 text-sm text-red-500">
+                          {errors.price}
+                        </p>
                       )}
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Discount (%)
+                        Discount
                       </label>
                       <input
                         name="discount"
@@ -619,7 +641,7 @@ const AddProductForm = ({ initialProduct = null }) => {
                         value={formData.discount}
                         onChange={handleChange}
                         min="0"
-                        max="100"
+                        max={formData.price}
                         className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                       />
                     </div>

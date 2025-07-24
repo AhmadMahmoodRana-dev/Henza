@@ -28,7 +28,7 @@ const MensWearSliderAndBasicCard = ({ index, item }) => {
 
         {hasDiscount && (
           <span className="absolute top-2 left-2 bg-[#fc2743] text-white text-sm px-2 py-1 rounded">
-            {percentage.toFixed(2)}%
+            {percentage.toFixed(0)}%
           </span>
         )}
 
