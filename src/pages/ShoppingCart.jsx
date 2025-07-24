@@ -9,8 +9,6 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Context } from "../Context/Context";
 import { Link, useNavigate } from "react-router-dom";
 
-
-
 export default function ShoppingCart() {
   const { openCart, setOpenCart } = useContext(Context);
   const [cartItems, setCartItems] = useState([]);
@@ -27,18 +25,18 @@ export default function ShoppingCart() {
   };
 
   const handleRemove = (indexToRemove) => {
-  const updatedCart = cartItems.filter((_, i) => i !== indexToRemove);
-  setCartItems(updatedCart);
-  localStorage.setItem('cart', JSON.stringify(updatedCart));
-};
+    const updatedCart = cartItems.filter((_, i) => i !== indexToRemove);
+    setCartItems(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+  };
 
-const subtotal = cartItems.reduce((total, item) => {
-  const priceStr = typeof item.price === 'string' ? item.price.replace('$', '') : item.price;
-  const price = parseFloat(priceStr) || 0;
-  const quantity = item.quantity || 1;
-  return total + price * quantity;
-}, 0);
-
+  const subtotal = cartItems.reduce((total, item) => {
+    const priceStr =
+      typeof item.price === "string" ? item.price.replace("$", "") : item.price;
+    const price = parseFloat(priceStr) || 0;
+    const quantity = item.quantity || 1;
+    return total + price * quantity;
+  }, 0);
 
   const onContinueShoping = () => {
     setOpenCart(!openCart);
@@ -109,15 +107,22 @@ const subtotal = cartItems.reduce((total, item) => {
                                   </h3>
                                   <p className="ml-4">{product.price}</p>
                                 </div>
-                                <p className="mt-1 text-sm text-gray-500">
-                                  {product.color}
-                                </p>
+                                <div
+                                  className="mt-1 w-6 h-6 rounded-full"
+                                  style={{ backgroundColor: product.color }}
+                                  title={product.color}
+                                />
                               </div>
                               <div className="flex flex-1 items-end justify-between text-sm">
                                 <p className="text-gray-500">
                                   Qty {product.quantity || 1}
                                 </p>
 
+                                {product?.size && (
+                                  <p className="text-gray-500">
+                                    Size {product.size || 1}
+                                  </p>
+                                )}
                                 <div className="flex">
                                   <button
                                     type="button"
