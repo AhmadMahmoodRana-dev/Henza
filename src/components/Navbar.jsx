@@ -35,34 +35,36 @@ const Navbar = () => {
     }));
   };
 
-  // Desktop Dropdown Component
+  // Desktop Dropdown Component - Fixed hover area
   const DesktopDropdown = ({ menu }) => (
-    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 bg-[#f3f3f3] shadow-lg p-6 z-50 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-all duration-300 w-[700px] rounded">
-      <div className="grid grid-cols-4 gap-6">
-        {menu.children.map((child) => (
-          <div key={child.id}>
-            <Link
-              to={`/menuPages/${child?.name}/${child?.id}`}
-              className="font-light text-gray-800 tracking-wide mb-2 uppercase hover:text-[#fc2743]"
-            >
-              {child.name}
-            </Link>
-            {child.children.map((grandchild) => (
+    <div className="absolute top-full left-1/2 transform -translate-x-1/2 pt-3 -mt-3 w-[700px] z-50 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity duration-300">
+      <div className="bg-[#f3f3f3] shadow-lg p-6 rounded">
+        <div className="grid grid-cols-4 gap-6">
+          {menu.children.map((child) => (
+            <div key={child.id}>
               <Link
-                key={grandchild.id}
-                to={grandchild.url || "#"}
-                className="block mb-1 hover:text-[#fc2743]"
+                to={`/menuPages/${child?.name}/${child?.id}`}
+                className="font-light text-gray-800 tracking-wide mb-2 uppercase hover:text-[#fc2743]"
               >
-                {grandchild.name}
+                {child.name}
               </Link>
-            ))}
-          </div>
-        ))}
+              {child.children.map((grandchild) => (
+                <Link
+                  key={grandchild.id}
+                  to={grandchild.url || "#"}
+                  className="block mb-1 hover:text-[#fc2743]"
+                >
+                  {grandchild.name}
+                </Link>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
 
-  // Mobile Menu Component
+  // Mobile Menu Component (unchanged)
   const MobileMenuTree = ({ nodes, level = 0 }) => (
     <ul className={`${level > 0 ? "pl-4" : ""}`}>
       {nodes.map((node) => (
@@ -70,7 +72,7 @@ const Navbar = () => {
           {node.children.length > 0 ? (
             <>
               <button
-                className="w-full flex justify-between items-center  py-3 hover:text-[#fc2743]"
+                className="w-full flex justify-between items-center py-3 hover:text-[#fc2743]"
                 onClick={() => toggleMenuExpansion(node.id)}
               >
                 {node.name}
@@ -101,12 +103,12 @@ const Navbar = () => {
   const token = localStorage.getItem("authToken");
 
   return (
-    <nav className="bg-white shadow-sm text-sm mt-6  sticky top-8 z-50">
+    <nav className="bg-white shadow-sm text-sm mt-6 sticky top-8 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <div className="flex items-center space-x-2">
-            <img src={logo} alt="Zeeki Logo" className=" h-16" />
+            <img src={logo} alt="Zeeki Logo" className="h-16" />
           </div>
 
           {/* Desktop Menu */}
