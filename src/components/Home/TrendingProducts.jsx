@@ -1,8 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
-import TrendingProductFilters from "./TrendingProductFilters";
-import TrendingProductCard from "./TrendingProductCard";
-import { CiSliderHorizontal } from "react-icons/ci";
-import { FiChevronDown } from "react-icons/fi";
+import { useState, useMemo, useEffect } from "react";
 import MensWearSliderAndBasicCard from "./MensWearSliderAndBasicCard";
 import { Listbox } from "@headlessui/react";
 import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
@@ -46,6 +42,8 @@ function TrendingProducts({ show, product }) {
     Season: [],
     Occasions: [],
   });
+  const [showAllProducts, setShowAllProducts] = useState(false);
+  const initialProductCount = 12;
 
   // Reset all filters
   const resetFilters = () => {
@@ -58,7 +56,13 @@ function TrendingProducts({ show, product }) {
       Occasions: [],
     });
     setSortOption("featured");
+    setShowAllProducts(false);
   };
+
+  // Reset "show all" when filters change
+  useEffect(() => {
+    setShowAllProducts(false);
+  }, [selectedFilters, sortOption]);
 
   // Handle individual filter changes
   const handleFilterChange = (filterType, value) => {
@@ -112,49 +116,20 @@ function TrendingProducts({ show, product }) {
 
   const handleCloseFilter = () => setShowFilter(false);
 
+  // Determine which products to display
+  const productsToDisplay = useMemo(() => {
+    return showAllProducts 
+      ? filteredProducts 
+      : filteredProducts.slice(0, initialProductCount);
+  }, [filteredProducts, showAllProducts]);
+
   return (
     <div className="min-h-screen p-4">
       <div className="mx-auto w-full">
         {/* Filter header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-          <div className="flex items-center gap-4 w-full md:w-auto">
-            <button 
-              onClick={() => setShowFilter(!showFilter)}
-              className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg"
-            >
-              <CiSliderHorizontal size={20} />
-              <span>Filters</span>
-            </button>
-            
-            {/* Selected filters badges */}
-            <div className="flex flex-wrap gap-2">
-              {Object.entries(selectedFilters).map(([key, values]) => (
-                values.map(value => (
-                  <span 
-                    key={`${key}-${value}`}
-                    className="bg-gray-100 px-3 py-1 rounded-full text-sm flex items-center gap-1"
-                  >
-                    {value}
-                    <button 
-                      onClick={() => handleFilterChange(key, values.filter(v => v !== value))}
-                      className="text-gray-500 hover:text-gray-700"
-                    >
-                      ×
-                    </button>
-                  </span>
-                ))
-              ))}
-              {Object.values(selectedFilters).some(arr => arr.length > 0) && (
-                <button 
-                  onClick={resetFilters}
-                  className="text-rose-600 text-sm font-medium"
-                >
-                  Clear all
-                </button>
-              )}
-            </div>
-          </div>
           
+          <h1></h1>
           {/* Sort dropdown */}
           <Listbox value={sortOption} onChange={setSortOption}>
             <div className="relative w-full md:w-60 text-sm">
@@ -293,11 +268,25 @@ function TrendingProducts({ show, product }) {
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {filteredProducts.map((item, index) => (
-                  <MensWearSliderAndBasicCard key={index} item={item} />
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {productsToDisplay.map((item, index) => (
+                    <MensWearSliderAndBasicCard key={index} item={item} />
+                  ))}
+                </div>
+                
+                {/* View All button */}
+                {!showAllProducts && filteredProducts.length > initialProductCount && (
+                  <div className="mt-10 text-center">
+                    <button
+                      onClick={() => setShowAllProducts(true)}
+                      className="bg-rose-600 hover:bg-rose-700 text-white font-medium py-2 px-6 rounded-lg transition-colors duration-300"
+                    >
+                      View All Products ({filteredProducts.length})
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
