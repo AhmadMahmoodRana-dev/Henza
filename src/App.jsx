@@ -18,6 +18,7 @@ import ShowProductPage from "./pages/DashboardPages/ShowProductPage";
 import ShowCategoryPage from "./pages/DashboardPages/ShowCategoryPage";
 import MenuManager from "./pages/DashboardPages/MenuManager";
 import MenuPage from "./pages/MenuPage";
+import CollectionPage from "./pages/CollectionPage";
 
 export default function App() {
   return (
@@ -36,6 +37,7 @@ export default function App() {
           <Route path="/productDetail/:id" element={<ProductDetail />} />
           <Route path="/category/:name" element={<CategoryPage />} />
           <Route path="/menuPages/:name/:menuId" element={<MenuPage />} />
+          <Route path="/collection/:name" element={<CollectionPage />} />
         </Route>
         {/* Dashboard Routes */}
         <Route path="/dashboard" element={<DashboardRoutes />}>
