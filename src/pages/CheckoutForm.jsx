@@ -436,7 +436,7 @@ function OrderSummary({ cartItems }) {
           return (
       <div className="flex items-center gap-4 mb-6">
         <img
-          src="https://cdn.pixabay.com/photo/2020/05/17/18/03/slippers-5181650_960_720.jpg"
+          src={item?.image}
           alt="Peshawari Chappal"
           className="w-24 h-24 object-cover rounded-lg border-2 border-gray-100"
         />
