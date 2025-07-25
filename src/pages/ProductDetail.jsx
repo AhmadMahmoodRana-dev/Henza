@@ -6,7 +6,7 @@ import {
   FaFacebookF,
   FaWhatsapp,
 } from "react-icons/fa";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Context } from "../Context/Context";
 import Footer from "../components/Footer/Footer";
 import axios from "axios";
@@ -22,6 +22,7 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const { setOpenCart } = useContext(Context);
+  const navigate = useNavigate()
 
   // States for zoom functionality
   const [showZoom, setShowZoom] = useState(false);
@@ -74,6 +75,31 @@ const ProductDetail = () => {
     cart.push(selectedProduct);
     localStorage.setItem("cart", JSON.stringify(cart));
     setOpenCart(true);
+  };
+
+
+  const handleBuyItNow = () => {
+    // Fallback to first image if currentImage is empty
+    const productImage = currentImage || productImages[0] || "";
+    
+    const selectedProduct = {
+      id: singleData.id,
+      name: singleData.productName,
+      price:
+        singleData.discount > 0
+          ? singleData.price - singleData.discount
+          : singleData.price,
+      color: color,
+      size: selectedSize, // Include selected size
+      quantity: quantity,
+      image: productImage, // Use fallback image
+      sku: singleData?.inventory?.SKU || ""
+    };
+
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    cart.push(selectedProduct);
+    localStorage.setItem("cart", JSON.stringify(cart));
+    navigate("/checkout")
   };
 
   const shareProduct = (platform) => {
@@ -294,12 +320,12 @@ const ProductDetail = () => {
             >
               Add to Cart
             </button>
-            <Link
-              to="/checkout"
+            <button
+              onClick={handleBuyItNow}
               className="flex-1 py-3 text-lg text-black border border-gray-400 rounded-lg text-center hover:bg-gray-100 transition-colors"
             >
               Buy Now
-            </Link>
+            </button>
           </div>
 
           {/* Wishlist */}

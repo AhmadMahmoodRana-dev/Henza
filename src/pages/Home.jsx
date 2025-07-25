@@ -13,10 +13,10 @@ const Home = () => {
       const { data } = await axios.get(
         `https://henza.zaffarsons.com/henza/get-all-products`
       );
-      const activeProducts = data.filter(
-        (product) => product?.inventory?.active === true
-      );
-      setAllProductData(activeProducts);
+      // const activeProducts = data.filter(
+      //   (product) => product?.inventory?.active === true
+      // );
+      setAllProductData(data);
       console.log("ALL PRODUCT DATA", data);
     } catch (error) {
       console.error(error);

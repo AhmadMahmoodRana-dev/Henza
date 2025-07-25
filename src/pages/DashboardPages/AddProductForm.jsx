@@ -40,8 +40,8 @@ const AddProductForm = ({ initialProduct = null }) => {
     type: "",
     collectionName: "",
     sizes: "",
-    active: true,
     inventory: {
+      active: true,
       SKU: "",
       inStock: true,
       quantityAvailable: "",
@@ -69,10 +69,10 @@ const AddProductForm = ({ initialProduct = null }) => {
         type: initialProduct.type,
         collectionName: initialProduct.collectionName,
         sizes: initialProduct.sizes,
-        active: initialProduct.active,
         inventory: {
           SKU: initialProduct.inventory?.SKU || "",
           inStock: initialProduct.inventory?.inStock || true,
+          active: initialProduct.active,
           quantityAvailable: initialProduct.inventory?.quantityAvailable || "",
           lowStockThreshold: initialProduct.inventory?.lowStockThreshold || "",
         },
@@ -329,7 +329,7 @@ const AddProductForm = ({ initialProduct = null }) => {
           form,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
-        console.log(res);
+        console.log(form);
       }
       navigate("/");
 
@@ -354,12 +354,12 @@ const AddProductForm = ({ initialProduct = null }) => {
           type: "",
           collectionName: "",
           sizes: "",
-          active: true,
           inventory: {
             SKU: "",
             inStock: true,
             quantityAvailable: "",
             lowStockThreshold: "",
+            active: true,
           },
         });
         setImages([]);

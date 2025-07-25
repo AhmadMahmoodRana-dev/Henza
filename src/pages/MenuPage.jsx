@@ -1,4 +1,3 @@
-import HomePageMainCarousel from "../components/Home/HomePageMainCarousel";
 import CategoryPageGridStructure from "../components/Home/CategoryPageGridStructure";
 import Footer from "../components/Footer/Footer";
 import axios from "axios";
@@ -127,15 +126,15 @@ const MenuPage = () => {
                   <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
                 </span>
               </Listbox.Button>
-              <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+              <Listbox.Options className="absolute z-10 mt-1 max-h-auto w-full overflow-auto rounded-md bg-white border border-gray-300 py-1 text-base shadow-lg  sm:text-sm">
                 {sortOptions.map((option) => (
                   <Listbox.Option
                     key={option.value}
                     value={option.value}
                     className={({ active, selected }) =>
                       `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                        active ? "bg-rose-100 text-rose-900" : "text-gray-900"
-                      } ${selected ? "bg-rose-200 font-semibold" : ""}`
+                        active ? "bg-[#fc2743] text-white" : "text-gray-900"
+                      } ${selected ? "bg-[#fc2743] text-white font-semibold" : ""}`
                     }
                   >
                     {({ selected }) => (

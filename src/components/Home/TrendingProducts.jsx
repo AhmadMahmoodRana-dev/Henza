@@ -141,15 +141,15 @@ function TrendingProducts({ show, product }) {
                   <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
                 </span>
               </Listbox.Button>
-              <Listbox.Options className="absolute z-20 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+              <Listbox.Options className="absolute border border-gray-300 z-20 mt-1 max-h-auto w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg  focus:outline-none sm:text-sm">
                 {sortOptions.map((option) => (
                   <Listbox.Option
                     key={option.value}
                     value={option.value}
                     className={({ active, selected }) =>
                       `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                        active ? "bg-rose-100 text-rose-900" : "text-gray-900"
-                      } ${selected ? "bg-rose-200 font-semibold" : ""}`
+                        active ? "bg-[#fc2743] text-white" : "text-gray-900"
+                      } ${selected ? "bg-[#fc2743] font-semibold text-white" : ""}`
                     }
                   >
                     {({ selected }) => (
@@ -166,89 +166,6 @@ function TrendingProducts({ show, product }) {
 
         {/* Main content */}
         <div className="flex flex-col md:flex-row gap-6">
-          {/* Filter sidebar */}
-          {showFilter && (
-            <div className="fixed inset-0 z-30 bg-black bg-opacity-50 lg:bg-transparent lg:relative lg:inset-auto lg:z-auto">
-              <div className="absolute right-0 top-0 h-full w-full max-w-sm bg-white shadow-xl lg:static lg:max-w-xs lg:shadow-none">
-                <div className="p-6 h-full overflow-y-auto">
-                  <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-semibold">Filters</h2>
-                    <button 
-                      onClick={handleCloseFilter} 
-                      className="lg:hidden text-gray-500 hover:text-gray-700"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                  
-                  <button 
-                    onClick={resetFilters}
-                    className="text-rose-600 mb-6 font-medium"
-                  >
-                    Reset all filters
-                  </button>
-                  
-                  {/* Price filter */}
-                  <div className="mb-8">
-                    <h3 className="font-semibold mb-3">Price</h3>
-                    <div className="space-y-2">
-                      {priceRanges.map(range => (
-                        <div key={range.id} className="flex items-center">
-                          <input
-                            type="checkbox"
-                            id={range.id}
-                            checked={selectedFilters.Price.includes(range.id)}
-                            onChange={(e) => {
-                              const newSelection = e.target.checked
-                                ? [...selectedFilters.Price, range.id]
-                                : selectedFilters.Price.filter(id => id !== range.id);
-                              handleFilterChange("Price", newSelection);
-                            }}
-                            className="mr-3 h-4 w-4 rounded border-gray-300 text-rose-600 focus:ring-rose-500"
-                          />
-                          <label htmlFor={range.id} className="text-gray-700">
-                            {range.label}
-                          </label>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  {/* Other filters */}
-                  {filters
-                    .filter(f => f !== "Price")
-                    .map(filterKey => (
-                      <div key={filterKey} className="mb-8">
-                        <h3 className="font-semibold mb-3">{filterKey}</h3>
-                        <div className="space-y-2">
-                          {/* In a real app, these would be dynamic based on product attributes */}
-                          {[1, 2, 3, 4].map(i => (
-                            <div key={i} className="flex items-center">
-                              <input
-                                type="checkbox"
-                                id={`${filterKey}-${i}`}
-                                checked={selectedFilters[filterKey].includes(`${filterKey} Option ${i}`)}
-                                onChange={(e) => {
-                                  const value = `${filterKey} Option ${i}`;
-                                  const newSelection = e.target.checked
-                                    ? [...selectedFilters[filterKey], value]
-                                    : selectedFilters[filterKey].filter(v => v !== value);
-                                  handleFilterChange(filterKey, newSelection);
-                                }}
-                                className="mr-3 h-4 w-4 rounded border-gray-300 text-rose-600 focus:ring-rose-500"
-                              />
-                              <label htmlFor={`${filterKey}-${i}`} className="text-gray-700">
-                                {filterKey} Option {i}
-                              </label>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </div>
-            </div>
-          )}
           
           {/* Product grid */}
           <div className="flex-1">

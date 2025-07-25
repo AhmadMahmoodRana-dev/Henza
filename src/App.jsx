@@ -23,7 +23,7 @@ import CollectionPage from "./pages/CollectionPage";
 export default function App() {
   return (
     <div>
-      {/* <ScrollToHash />
+      <ScrollToHash />
       <Routes>
         <Route element={<PublicRoutes />}>
           <Route path="/login" element={<Login />} />
@@ -51,7 +51,7 @@ export default function App() {
           <Route path="add-collection/:id" element={<AddCategoryPage/>} />
           <Route path="Menu" element={<MenuManager/>} />
         </Route>
-      </Routes> */}
+      </Routes>
     </div>
   );
 }

@@ -424,32 +424,44 @@ export default function CheckoutForm() {
 
 function OrderSummary({ cartItems }) {
   const subtotal = cartItems.reduce((total, item) => {
-  const priceStr = typeof item.price === 'string' ? item.price.replace('$', '') : item.price;
-  const price = parseFloat(priceStr) || 0;
-  const quantity = item.quantity || 1;
-  return total + price * quantity;
-}, 0);
+    const priceStr =
+      typeof item.price === "string" ? item.price.replace("$", "") : item.price;
+    const price = parseFloat(priceStr) || 0;
+    const quantity = item.quantity || 1;
+    return total + price * quantity;
+  }, 0);
   return (
     <div className="bg-white shadow-2xl rounded-3xl p-8 h-fit sticky top-8 border border-gray-100">
       <h2 className="text-2xl font-bold text-gray-800 mb-6">Order Summary</h2>
-        {cartItems.map((item, index) => {
-          return (
-      <div className="flex items-center gap-4 mb-6">
-        <img
-          src={item?.image}
-          alt="Peshawari Chappal"
-          className="w-24 h-24 object-cover rounded-lg border-2 border-gray-100"
-        />
+      {cartItems.map((item, index) => {
+        return (
+          <div className="flex items-center gap-4 mb-6">
+            <img
+              src={item?.image}
+              alt="Peshawari Chappal"
+              className="w-24 h-24 object-cover rounded-lg border-2 border-gray-100"
+            />
             <div className="flex-1">
-              <p className="font-medium text-gray-800">
-                {item?.name}
+              <p className="font-medium text-gray-800">{item?.name}</p>
+                <p className="text-sm text-gray-600 mt-1">
+                  Quantity: {item?.quantity}
+                </p>
+              <div className="flex justify-between items-center mt-2">
+              {
+                item?.size &&
+                <p className="text-sm text-gray-600">
+                  Size: {item?.size}
+                </p>
+              }
+                <div style={{backgroundColor:item?.color}} className="w-5 h-5 rounded-full" />
+              </div>
+              <p className="font-medium mt-2 text-red-600">
+                Rs. {item?.price * item?.quantity}
               </p>
-              <p className="text-sm text-gray-600 mt-1">Quantity: {item?.quantity}</p>
-              <p className="font-medium mt-2 text-red-600">Rs. {item?.price * item?.quantity}</p>
             </div>
-      </div>
-          );
-        })}
+          </div>
+        );
+      })}
 
       <div className="text-sm space-y-3 mb-6">
         <div className="flex justify-between text-gray-600">
@@ -464,7 +476,7 @@ function OrderSummary({ cartItems }) {
 
       <div className="flex justify-between font-bold text-lg mb-6 pt-6 border-t-2 border-gray-100">
         <span className="text-gray-800">Total</span>
-        <span className="text-red-600">PKR Rs. {subtotal.toFixed(2)}</span>
+        <span className="text-red-600">Rs. {subtotal.toFixed(2)}</span>
       </div>
 
       <p className="text-sm text-gray-600 mb-6">
