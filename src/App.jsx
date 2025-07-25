@@ -24,7 +24,7 @@ export default function App() {
   return (
     <div>
       <ScrollToHash />
-      {/* <Routes>
+      <Routes>
         <Route element={<PublicRoutes />}>
           <Route path="/login" element={<Login />} />
         </Route>
@@ -42,7 +42,7 @@ export default function App() {
         <Route path="/dashboard" element={<DashboardRoutes />}>
           <Route index element={<h1>Dashboard Home</h1>} />
           <Route path="add-product" element={<AddProductForm/>} />
-          <Route path="Product" element={<ShowProductPage/>} />
+          <Route path="Product" element={<ShowProductPage/>} /> 
           <Route path="Themes" element={<ShowCarouselPage/>} />
           <Route path="add-theme" element={<AddCarouselPage/>} />
           <Route path="add-theme/:id" element={<AddCarouselPage/>} />
@@ -51,7 +51,7 @@ export default function App() {
           <Route path="add-collection/:id" element={<AddCategoryPage/>} />
           <Route path="Menu" element={<MenuManager/>} />
         </Route>
-      </Routes> */}
+      </Routes>
     </div>
   );
 }

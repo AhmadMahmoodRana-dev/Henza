@@ -34,14 +34,14 @@ const AddProductForm = ({ initialProduct = null }) => {
     productDescription: "",
     price: "",
     discount: "",
-    categories: "",
+    categories: "default",
     menu_ids: "",
     productColor: "",
     type: "",
     collectionName: "",
     sizes: "",
     inventory: {
-      active: true,
+      active: "Y",
       SKU: "",
       inStock: true,
       quantityAvailable: "",
@@ -63,7 +63,7 @@ const AddProductForm = ({ initialProduct = null }) => {
         productDescription: initialProduct.productDescription,
         price: initialProduct.price,
         discount: initialProduct.discount,
-        categories: initialProduct.categories,
+        categories: initialProduct.categories || "default",
         menu_ids: initialProduct.menu_ids,
         productColor: productColor, // Use converted value
         type: initialProduct.type,
@@ -72,7 +72,7 @@ const AddProductForm = ({ initialProduct = null }) => {
         inventory: {
           SKU: initialProduct.inventory?.SKU || "",
           inStock: initialProduct.inventory?.inStock || true,
-          active: initialProduct.active,
+          active: initialProduct.active == true ? "Y" : "N",
           quantityAvailable: initialProduct.inventory?.quantityAvailable || "",
           lowStockThreshold: initialProduct.inventory?.lowStockThreshold || "",
         },
@@ -104,7 +104,10 @@ const AddProductForm = ({ initialProduct = null }) => {
       const { data } = await axios.get(
         `https://henza.zaffarsons.com/henza/Collection`
       );
-      setCollectionNameOptions(data);
+        const activeProducts = data.filter(
+        (product) => product?.ACTIVE === "Y"
+      );
+      setCollectionNameOptions(activeProducts);
     } catch (error) {
       console.error(error);
     }
@@ -253,7 +256,6 @@ const AddProductForm = ({ initialProduct = null }) => {
     if (!formData.collectionName)
       newErrors.collectionName = "Collection is required";
 
-    if (!formData.categories) newErrors.categories = "Category is required";
 
     if (previewUrls.length === 0)
       newErrors.images = "At least one image is required";
@@ -285,13 +287,13 @@ const AddProductForm = ({ initialProduct = null }) => {
     form.append("productDescription", formData.productDescription);
     form.append("price", formData.price);
     form.append("discount", formData.discount);
-    form.append("categories", formData.categories);
+    form.append("categories", formData.categories || "default");
     form.append("productColor", formData.productColor);
     form.append("type", formData.type);
     form.append("collectionName", formData.collectionName);
     form.append("menu_ids", formData.menu_ids);
     form.append("sizes", formData.sizes);
-    form.append("active", formData.active);
+    form.append("active", formData.active == true ? "Y" : "N");
 
     form.append("SKU", formData.inventory.SKU);
     form.append("inStock", formData.inventory.inStock);
@@ -359,7 +361,7 @@ const AddProductForm = ({ initialProduct = null }) => {
             inStock: true,
             quantityAvailable: "",
             lowStockThreshold: "",
-            active: true,
+            active: "Y",
           },
         });
         setImages([]);
@@ -551,7 +553,7 @@ const AddProductForm = ({ initialProduct = null }) => {
                     )}
                   </div>
 
-                  <div>
+                  {/* <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Category *
                     </label>
@@ -576,7 +578,7 @@ const AddProductForm = ({ initialProduct = null }) => {
                         {errors.categories}
                       </p>
                     )}
-                  </div>
+                  </div> */}
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">

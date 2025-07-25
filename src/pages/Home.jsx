@@ -13,10 +13,10 @@ const Home = () => {
       const { data } = await axios.get(
         `https://henza.zaffarsons.com/henza/get-all-products`
       );
-      // const activeProducts = data.filter(
-      //   (product) => product?.inventory?.active === true
-      // );
-      setAllProductData(data);
+      const activeProducts = data.filter(
+        (product) => product?.inventory?.active === true
+      );
+      setAllProductData(activeProducts);
       console.log("ALL PRODUCT DATA", data);
     } catch (error) {
       console.error(error);
@@ -47,8 +47,6 @@ const Home = () => {
             <HomePageGridStructure heading={collection} data={products} />
           </div>
         ))}
-        {/* <HomePageGridStructure heading={"Buy Festive Glam"} /> */}
-        {/* <HomePageGridStructure heading={"Shop Daily Pret"} /> */}
         {/* <BrandCardGrid /> */}
         {/* <LargeCardSlider heading={"Buy Menswear"} products={products} /> */}
         {/* <LargeCardSlider heading={"Shop Kidswear"} products={products} /> */}
