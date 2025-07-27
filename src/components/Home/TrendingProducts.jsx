@@ -127,10 +127,9 @@ function TrendingProducts({ show, product }) {
     <div className="min-h-screen p-4">
       <div className="mx-auto w-full">
         {/* Filter header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+        {/* <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
           
           <h1></h1>
-          {/* Sort dropdown */}
           <Listbox value={sortOption} onChange={setSortOption}>
             <div className="relative w-full md:w-60 text-sm">
               <Listbox.Button className="relative w-full cursor-default rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-600">
@@ -162,7 +161,7 @@ function TrendingProducts({ show, product }) {
               </Listbox.Options>
             </div>
           </Listbox>
-        </div>
+        </div> */}
 
         {/* Main content */}
         <div className="flex flex-col md:flex-row gap-6">
