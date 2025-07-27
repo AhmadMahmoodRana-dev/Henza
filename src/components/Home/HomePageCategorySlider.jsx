@@ -7,7 +7,7 @@ const HomePageCategorySlider = ({ heading }) => {
   const [products, setProducts] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [perSlide, setPerSlide] = useState(1);
-  const gapRem = 1; // 1rem = 16px
+  const gapRem = 1;
   const containerRef = useRef(null);
 
   const getCollection = async () => {
@@ -15,7 +15,10 @@ const HomePageCategorySlider = ({ heading }) => {
       const { data } = await axios.get(
         "https://henza.zaffarsons.com/henza/Collection"
       );
-      setProducts(data);
+       const activeProducts = data.filter(
+        (product) => product?.ACTIVE === "Y"
+      );
+      setProducts(activeProducts);
     } catch (error) {
       console.error("Error fetching collections:", error);
     }

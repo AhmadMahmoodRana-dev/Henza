@@ -14,6 +14,13 @@ const Navbar = () => {
   const { openCart, setOpenCart } = useContext(Context);
   const { menuTree, loading } = useMenu();
 
+  const [cartItems, setCartItems] = useState([]);
+
+  useEffect(() => {
+    const cartData = JSON.parse(localStorage.getItem("cart")) || [];
+    setCartItems(cartData);
+  }, [openCart]);
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
@@ -104,7 +111,7 @@ const Navbar = () => {
 
   return (
     <nav className="bg-white shadow-sm text-sm mt-6 sticky top-8 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <div className="flex items-center space-x-2">
@@ -112,7 +119,7 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex space-x-6 font-light text-gray-800 tracking-wide">
+          <div className="hidden md:flex space-x-6 font-light text-[#222] tracking-wide">
             <Link to={"/"} className="hover:text-[#fc2743]">
               HOME
             </Link>
@@ -153,10 +160,14 @@ const Navbar = () => {
 
           {/* Icons */}
           <div className="flex items-center space-x-4">
-            <FaSearch
-              size={20}
-              className="hidden md:block text-gray-600 cursor-pointer"
-            />
+            <div className="flex justify-center items-center gap-4 border-b w-[120px] relative pl-24">
+              <FaSearch
+                size={20}
+                className="hidden md:block text-gray-600 cursor-pointer absolute left-0"
+              />
+
+              <input className="text-[#797979] tracking-widest" value={"SEARCH"} />
+            </div>
             <FaUser
               size={20}
               className="hidden md:block text-gray-600 cursor-pointer"
@@ -169,7 +180,7 @@ const Navbar = () => {
                 className="text-gray-600 cursor-pointer"
               />
               <span className="absolute -top-2 -right-2 bg-[#52872e] text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                0
+                {cartItems.length}
               </span>
             </div>
             <button

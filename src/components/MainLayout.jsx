@@ -177,7 +177,7 @@ const MainLayout = ({ children }) => {
       <Navbar />
 
       {/* Main Content */}
-      <main className="pt-4">{children}</main>
+      <main className="pt-4 w-full">{children}</main>
     </div>
   );
 };

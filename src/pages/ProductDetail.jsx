@@ -11,6 +11,8 @@ import { Context } from "../Context/Context";
 import Footer from "../components/Footer/Footer";
 import axios from "axios";
 import DOMPurify from "dompurify";
+import HomePageGridStructure from "../components/Home/HomePageGridStructure";
+import RelatedGridStructure from "../components/Home/RelatedGridStructure";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -22,7 +24,17 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const { setOpenCart } = useContext(Context);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+
+  const getDiscountPercentage = (originalPrice, discountAmount) => {
+    if (!originalPrice || originalPrice === 0) return 0;
+    return (discountAmount / originalPrice) * 100;
+  };
+
+  const hasDiscount = singleData?.discount > 0;
+  const percentage = hasDiscount
+    ? getDiscountPercentage(singleData?.price, singleData?.discount)
+    : 0;
 
   // States for zoom functionality
   const [showZoom, setShowZoom] = useState(false);
@@ -39,7 +51,7 @@ const ProductDetail = () => {
       setProductsImages(data?.images || []);
       setCurrentImage(data?.images?.[0] || "");
       setColor(data?.productColor?.[0] || "");
-      
+
       // Initialize selected size if sizes exist
       if (data?.sizes?.length > 0) {
         setSelectedSize(data.sizes[0]);
@@ -56,7 +68,7 @@ const ProductDetail = () => {
   const handleAddToCart = () => {
     // Fallback to first image if currentImage is empty
     const productImage = currentImage || productImages[0] || "";
-    
+
     const selectedProduct = {
       id: singleData.id,
       name: singleData.productName,
@@ -68,7 +80,7 @@ const ProductDetail = () => {
       size: selectedSize, // Include selected size
       quantity: quantity,
       image: productImage, // Use fallback image
-      sku: singleData?.inventory?.SKU || ""
+      sku: singleData?.inventory?.SKU || "",
     };
 
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -77,11 +89,10 @@ const ProductDetail = () => {
     setOpenCart(true);
   };
 
-
   const handleBuyItNow = () => {
     // Fallback to first image if currentImage is empty
     const productImage = currentImage || productImages[0] || "";
-    
+
     const selectedProduct = {
       id: singleData.id,
       name: singleData.productName,
@@ -93,13 +104,13 @@ const ProductDetail = () => {
       size: selectedSize, // Include selected size
       quantity: quantity,
       image: productImage, // Use fallback image
-      sku: singleData?.inventory?.SKU || ""
+      sku: singleData?.inventory?.SKU || "",
     };
 
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
     cart.push(selectedProduct);
     localStorage.setItem("cart", JSON.stringify(cart));
-    navigate("/checkout")
+    navigate("/checkout");
   };
 
   const shareProduct = (platform) => {
@@ -140,6 +151,38 @@ const ProductDetail = () => {
     setZoomBackgroundPosition(`${xPercent}% ${yPercent}%`);
   };
 
+  // RELATED PRODUCT
+
+  const [allProductData, setAllProductData] = useState([]);
+
+  const fetchAllProductsData = async () => {
+    try {
+      const { data } = await axios.get(
+        `https://henza.zaffarsons.com/henza/get-all-products`
+      );
+      const activeProducts = data.filter(
+        (product) => product?.inventory?.active === true
+      );
+      setAllProductData(activeProducts);
+      console.log("ALL PRODUCT DATA", data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
+    fetchAllProductsData();
+  }, []);
+
+  // GROUPED PRODUCTS
+  const groupedProducts = allProductData.reduce((groups, product) => {
+    const collection = product.collectionName || "Uncategorized";
+    if (!groups[collection]) {
+      groups[collection] = [];
+    }
+    groups[collection].push(product);
+    return groups;
+  }, {});
+
   return (
     <>
       <div className="max-w-7xl mx-auto px-4 py-12 flex flex-col md:flex-row gap-12">
@@ -152,9 +195,7 @@ const ProductDetail = () => {
                 key={index}
                 onClick={() => setCurrentImage(img)}
                 className={`aspect-[3/4] w-full rounded-lg overflow-hidden ${
-                  currentImage === img
-                    ? "border-2 border-black"
-                    : "border border-gray-200"
+                  currentImage === img ? "" : " border-gray-200"
                 }`}
               >
                 <img
@@ -168,8 +209,13 @@ const ProductDetail = () => {
 
           {/* Main Image with Zoom */}
           <div className="relative">
+            {hasDiscount && (
+              <span className="absolute top-2 left-2 bg-[#fc2743] text-white text-sm px-2 py-1 rounded z-10">
+                {percentage.toFixed(0)}%
+              </span>
+            )}{" "}
             <div
-              className="w-[400px] h-[550px] border rounded-xl overflow-hidden shadow-sm relative cursor-zoom-in"
+              className="w-[400px] h-[550px]  rounded-xl overflow-hidden shadow-sm relative cursor-zoom-in"
               onMouseEnter={() => setShowZoom(true)}
               onMouseLeave={() => setShowZoom(false)}
               onMouseMove={handleMouseMove}
@@ -184,7 +230,7 @@ const ProductDetail = () => {
               {/* Zoom Lens */}
               {showZoom && (
                 <div
-                  className="absolute border-2 border-white rounded-full bg-white bg-opacity-20 pointer-events-none shadow-lg"
+                  className="absolute   rounded-full bg-opacity-20 pointer-events-none"
                   style={{
                     width: "60px",
                     height: "60px",
@@ -204,7 +250,7 @@ const ProductDetail = () => {
                     backgroundRepeat: "no-repeat",
                     backgroundPosition: zoomBackgroundPosition,
                     backgroundSize: "200%",
-                    backgroundColor: "white",
+                    backgroundColor: "",
                     opacity: 1,
                   }}
                 />
@@ -230,9 +276,9 @@ const ProductDetail = () => {
             </p>
             <div className="flex gap-4">
               <p
-                className={`text-xl font-semibold ${singleData?.discount > 0 ? "text-black" : "text-rose-600"}  mb-4 ${
-                  singleData?.discount > 0 ? "line-through" : ""
-                }`}
+                className={`text-xl font-semibold ${
+                  singleData?.discount > 0 ? "text-black" : "text-rose-600"
+                }  mb-4 ${singleData?.discount > 0 ? "line-through" : ""}`}
               >
                 PKR {singleData?.price?.toLocaleString() || 0}
               </p>
@@ -280,7 +326,7 @@ const ProductDetail = () => {
                 <button
                   key={c}
                   onClick={() => setColor(c)}
-                  className={`w-8 h-8 rounded-full border-2 transition-all ${
+                  className={`w-8 h-8  border-2 transition-all ${
                     color === c
                       ? "border-rose-500 ring-2 ring-rose-200"
                       : "border-gray-200 hover:border-gray-400"
@@ -313,37 +359,37 @@ const ProductDetail = () => {
           </div>
 
           {/* Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-6">
+            <button
+              onClick={() => setIsWishlisted(!isWishlisted)}
+              className="border p-3.5 bg-white rounded-full"
+            >
+              <FaHeart
+                className={`h-4 w-4 transition-colors ${
+                  isWishlisted ? "text-rose-500 fill-current" : "text-gray-400"
+                }`}
+              />
+              {isWishlisted ? "" : ""}
+            </button>
             <button
               onClick={handleAddToCart}
-              className="flex-1 py-3 text-lg text-white bg-black hover:bg-gray-800 rounded-lg transition-colors"
+              className="flex-1 w-[40px] py-2 text-lg text-white bg-black hover:bg-gray-800 rounded-lg transition-colors"
             >
               Add to Cart
             </button>
             <button
               onClick={handleBuyItNow}
-              className="flex-1 py-3 text-lg text-black border border-gray-400 rounded-lg text-center hover:bg-gray-100 transition-colors"
+              className="flex-1 py-1 w-[40px] text-lg text-black border border-gray-400 rounded-lg text-center hover:bg-gray-100 transition-colors"
             >
               Buy Now
             </button>
           </div>
 
           {/* Wishlist */}
-          <button
-            onClick={() => setIsWishlisted(!isWishlisted)}
-            className="w-full py-3 text-sm rounded-lg border border-gray-300 hover:border-rose-400 flex justify-center items-center gap-2 transition-colors"
-          >
-            <FaHeart
-              className={`h-4 w-4 transition-colors ${
-                isWishlisted ? "text-rose-500 fill-current" : "text-gray-400"
-              }`}
-            />
-            {isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
-          </button>
 
           {/* Product Details */}
           {singleData?.productDescription && (
-            <div>
+            <div className="border-t border-b py-2">
               <h2 className="text-lg font-bold text-gray-800 mb-2">
                 Product Details
               </h2>
@@ -358,9 +404,6 @@ const ProductDetail = () => {
 
           {/* Share Section */}
           <div>
-            <h3 className="text-base font-medium text-gray-700 mb-3">
-              Share This Product
-            </h3>
             <div className="flex gap-3">
               <button
                 onClick={() => shareProduct("facebook")}
@@ -379,7 +422,23 @@ const ProductDetail = () => {
         </div>
       </div>
 
-      <Footer />
+      <div className="w-full h-screen bg-white">
+        <h1 className="text-center uppercase text-black font-semibold text-3xl">
+          You May Also Like
+        </h1>
+
+        {singleData?.collectionName &&
+          groupedProducts[singleData.collectionName]?.length > 1 && (
+            <div className="w-full flex flex-col  pt-10 justify-center">
+              <RelatedGridStructure
+                heading={`More from ${singleData.collectionName}`}
+                data={groupedProducts[singleData.collectionName]?.filter(
+                  (product) => product.id !== singleData.id // Exclude current product
+                )}
+              />
+            </div>
+          )}
+      </div>
     </>
   );
 };

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import {FiHome,FiEdit2,FiFileText,FiBarChart2,FiUser,FiSettings,FiLogOut,FiMenu,FiX} from "react-icons/fi";
 import { Link, useLocation } from "react-router-dom";
-import Logo from "../../assets/logo.png";
+import Logo from "../../assets/logo.jpg";
 const DashboardSidebar = () => {
   const [selectedTab, setSelectedTab] = useState("");
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -85,7 +85,7 @@ const DashboardSidebar = () => {
       >
         {/* Logo Section */}
         <div className="mb-8 p-2 bg-white flex justify-between items-center relative">
-          <img src={Logo} width={200} className="absolute -top-10 left-6" />
+          <img src={Logo} width={100} className="absolute top-0  left-6" />
           <button
             className="md:hidden p-1"
             onClick={() => setIsMobileSidebarOpen(false)}

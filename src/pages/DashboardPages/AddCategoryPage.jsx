@@ -38,13 +38,36 @@ const AddCategoryPage = () => {
   }, [id]);
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImage(file);
-      setPreview(URL.createObjectURL(file));
-      setCurrentImage(""); // Clear current image when new image is selected
-    }
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const img = new Image();
+  const reader = new FileReader();
+
+  reader.onload = (event) => {
+    img.src = event.target.result;
   };
+
+  img.onload = () => {
+    if (img.width > 310 || img.height > 310) {
+      setMessage({
+        text: "Image must be 300x300 pixels or smaller.",
+        type: "error",
+      });
+      setImage(null);
+      setPreview("");
+      e.target.value = ""; // Clear file input
+      return;
+    }
+
+    setImage(file);
+    setPreview(img.src);
+    setCurrentImage(""); // Clear old image if new one selected
+  };
+
+  reader.readAsDataURL(file);
+};
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();

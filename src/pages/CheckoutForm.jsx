@@ -453,7 +453,7 @@ function OrderSummary({ cartItems }) {
                   Size: {item?.size}
                 </p>
               }
-                <div style={{backgroundColor:item?.color}} className="w-5 h-5 rounded-full" />
+                <div style={{backgroundColor:item?.color}} className="w-5 h-5" />
               </div>
               <p className="font-medium mt-2 text-red-600">
                 Rs. {item?.price * item?.quantity}
@@ -486,5 +486,4 @@ function OrderSummary({ cartItems }) {
   );
 }
 
-const inputStyle =
-  "w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#70c1f3c2] focus:border-[#70c1f3c2] outline-none text-sm transition-all duration-200 placeholder-gray-400 hover:border-gray-300";
+const inputStyle ="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#70c1f3c2] focus:border-[#70c1f3c2] outline-none text-sm transition-all duration-200 placeholder-gray-400 hover:border-gray-300";

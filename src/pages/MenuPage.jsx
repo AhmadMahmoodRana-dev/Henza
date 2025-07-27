@@ -4,7 +4,7 @@ import axios from "axios";
 import { useEffect, useState, useMemo, Fragment } from "react";
 import { useParams } from "react-router-dom";
 import { Listbox } from "@headlessui/react";
-import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { IoChevronDown, IoChevronUp } from "react-icons/io5";
 
 const sortOptions = [
   { value: "featured", label: "Featured" },
@@ -35,8 +35,8 @@ const MenuPage = () => {
           `https://henza.zaffarsons.com/henza/get-products-by-menu/${menuId}`
         );
         const activeProducts = data.filter(
-        (product) => product?.inventory?.active === true
-      );
+          (product) => product?.inventory?.active === true
+        );
         setAllProductData(activeProducts);
       } catch (error) {
         console.error(error);
@@ -111,41 +111,56 @@ const MenuPage = () => {
     <>
       <div className="w-full min-h-screen xl:px-16 lg:px-12 md:px-10 sm:px-8 px-4">
         {/* <HomePageMainCarousel /> */}
-        <h2 className="text-2xl font-semibold border-b border-gray-300 py-6 text-center">{name}</h2>
+        <h2 className="text-2xl font-semibold border-b border-gray-300 py-6 text-center">
+          {name}
+        </h2>
 
-        <div className="flex justify-between items-center mb-6 mt-6">
-          <h2></h2>
-
+        <div className="flex flex-col">
           <Listbox value={sortOption} onChange={setSortOption}>
-            <div className="relative w-60 text-sm">
-              <Listbox.Button className="relative w-full cursor-default rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-600">
-                <span className="block truncate">
-                  {sortOptions.find((option) => option.value === sortOption)?.label}
-                </span>
-                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                  <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                </span>
-              </Listbox.Button>
-              <Listbox.Options className="absolute z-10 mt-1 max-h-auto w-full overflow-auto rounded-md bg-white border border-gray-300 py-1 text-base shadow-lg  sm:text-sm">
-                {sortOptions.map((option) => (
-                  <Listbox.Option
-                    key={option.value}
-                    value={option.value}
-                    className={({ active, selected }) =>
-                      `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                        active ? "bg-[#fc2743] text-white" : "text-gray-900"
-                      } ${selected ? "bg-[#fc2743] text-white font-semibold" : ""}`
-                    }
-                  >
-                    {({ selected }) => (
-                      <span className={`block truncate ${selected ? "font-semibold" : ""}`}>
-                        {option.label}
-                      </span>
+            {({ open }) => (
+              <div className="relative">
+                <div className="flex gap-4 items-center justify-end  -mt-8">
+                  <span className="mr-4 text-sm font-medium text-gray-500 tracking-wider">
+                    SORT BY
+                  </span>
+                  <Listbox.Button className="relative flex items-center justify-center rounded-md bg-white p-1 text-gray-400 hover:text-gray-500">
+                    {open ? (
+                      <IoChevronUp className="h-5 w-5" aria-hidden="true" />
+                    ) : (
+                      <IoChevronDown className="h-5 w-5" aria-hidden="true" />
                     )}
-                  </Listbox.Option>
-                ))}
-              </Listbox.Options>
-            </div>
+                  </Listbox.Button>
+                </div>
+
+                <Listbox.Options className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ">
+                  <div className="py-1">
+                    {sortOptions.map((option) => (
+                      <Listbox.Option
+                        key={option.value}
+                        value={option.value}
+                        className={({ active, selected }) =>
+                          `relative cursor-pointer select-none py-2 pl-4 pr-9 ${
+                            active || selected
+                              ? "bg-[#fc2743] text-white"
+                              : "text-gray-900"
+                          }`
+                        }
+                      >
+                        {({ selected }) => (
+                          <span
+                            className={`block truncate ${
+                              selected ? "font-semibold" : "font-normal"
+                            }`}
+                          >
+                            {option.label}
+                          </span>
+                        )}
+                      </Listbox.Option>
+                    ))}
+                  </div>
+                </Listbox.Options>
+              </div>
+            )}
           </Listbox>
         </div>
 

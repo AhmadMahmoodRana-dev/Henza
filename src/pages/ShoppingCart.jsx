@@ -108,7 +108,7 @@ export default function ShoppingCart() {
                                   <p className="ml-4">{product.price}</p>
                                 </div>
                                 <div
-                                  className="mt-1 w-6 h-6 rounded-full"
+                                  className="mt-1 w-6 h-6"
                                   style={{ backgroundColor: product.color }}
                                   title={product.color}
                                 />
