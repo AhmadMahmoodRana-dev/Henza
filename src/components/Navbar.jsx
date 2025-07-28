@@ -166,7 +166,7 @@ const Navbar = () => {
                 className="hidden md:block text-gray-600 cursor-pointer absolute left-0"
               />
 
-              <input className="text-[#797979] tracking-widest" value={"SEARCH"} />
+              <input type="text" placeholder="SEARCH" className="text-[#797979] tracking-widest outline-none"  />
             </div>
             <FaUser
               size={20}

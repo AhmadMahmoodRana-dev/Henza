@@ -41,7 +41,7 @@ const AddProductForm = ({ initialProduct = null }) => {
     collectionName: "",
     sizes: "",
     inventory: {
-      active: "Y",
+      active: true,
       SKU: "",
       inStock: true,
       quantityAvailable: "",
@@ -72,7 +72,7 @@ const AddProductForm = ({ initialProduct = null }) => {
         inventory: {
           SKU: initialProduct.inventory?.SKU || "",
           inStock: initialProduct.inventory?.inStock || true,
-          active: initialProduct.active == true ? "Y" : "N",
+          active:initialProduct.active === "Y" || initialProduct.active === true,
           quantityAvailable: initialProduct.inventory?.quantityAvailable || "",
           lowStockThreshold: initialProduct.inventory?.lowStockThreshold || "",
         },
@@ -104,9 +104,7 @@ const AddProductForm = ({ initialProduct = null }) => {
       const { data } = await axios.get(
         `https://henza.zaffarsons.com/henza/Collection`
       );
-        const activeProducts = data.filter(
-        (product) => product?.ACTIVE === "Y"
-      );
+      const activeProducts = data.filter((product) => product?.ACTIVE === "Y");
       setCollectionNameOptions(activeProducts);
     } catch (error) {
       console.error(error);
@@ -255,7 +253,6 @@ const AddProductForm = ({ initialProduct = null }) => {
 
     if (!formData.collectionName)
       newErrors.collectionName = "Collection is required";
-
 
     if (previewUrls.length === 0)
       newErrors.images = "At least one image is required";
