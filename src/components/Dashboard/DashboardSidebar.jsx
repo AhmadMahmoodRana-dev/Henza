@@ -1,11 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import {FiHome,FiEdit2,FiFileText,FiBarChart2,FiUser,FiSettings,FiLogOut,FiMenu,FiX} from "react-icons/fi";
 import { Link, useLocation } from "react-router-dom";
 import Logo from "../../assets/logo.jpg";
+import { Context } from "../../Context/Context";
 const DashboardSidebar = () => {
   const [selectedTab, setSelectedTab] = useState("");
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const location = useLocation();
+  const {logout} = useContext(Context)
 
   const menuItems = [
     {
@@ -123,18 +125,17 @@ const DashboardSidebar = () => {
           className="absolute bottom-0 left-0 right-0 p-4 border-t bg-white"
           style={{ borderColor: "#ddd" }}
         >
-          <Link
-          to={'/'}
+          <button
             className="w-full flex items-center px-4 py-3 rounded-lg hover:bg-gray-200"
             style={{
               color: "#444",
               backgroundColor: "#ededed",
             }}
-            onClick={() => console.log("Logout function here")}
+            onClick={() => logout()}
           >
             <FiLogOut />
             <span className="ml-3">Log Out</span>
-          </Link>
+          </button>
         </div>
       </div>
 
