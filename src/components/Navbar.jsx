@@ -13,7 +13,7 @@ const Navbar = () => {
   const [isMobile, setIsMobile] = useState(false);
   const { openCart, setOpenCart } = useContext(Context);
   const { menuTree, loading } = useMenu();
-
+console.log("menuTree",menuTree)
   const [cartItems, setCartItems] = useState([]);
 
   useEffect(() => {
@@ -138,7 +138,7 @@ const Navbar = () => {
                     </>
                   ) : (
                     <Link
-                      to={menu.id || "#"}
+                to={`/menuPages/${menu?.name}/${menu?.id}`}
                       className="hover:text-[#fc2743] uppercase"
                     >
                       {menu.name}
