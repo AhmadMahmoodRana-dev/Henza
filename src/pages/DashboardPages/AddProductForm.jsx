@@ -321,7 +321,7 @@ const AddProductForm = ({ initialProduct = null }) => {
           { headers: { "Content-Type": "multipart/form-data" } }
         );
         console.log(res);
-        navigate("/");
+        navigate("/dashboard");
       } else {
         const res = await axios.post(
           "https://henza.zaffarsons.com/henza/add-full-product",
@@ -330,7 +330,7 @@ const AddProductForm = ({ initialProduct = null }) => {
         );
         console.log(form);
       }
-      navigate("/");
+      navigate("/dashboard");
 
       toast.success(
         initialProduct
