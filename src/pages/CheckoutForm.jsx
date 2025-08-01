@@ -443,17 +443,18 @@ function OrderSummary({ cartItems }) {
             />
             <div className="flex-1">
               <p className="font-medium text-gray-800">{item?.name}</p>
-                <p className="text-sm text-gray-600 mt-1">
-                  Quantity: {item?.quantity}
-                </p>
+              <p className="my-1 text-sm text-gray-900">( {item.sku} )</p>
+              <p className="text-sm text-gray-600 mt-1">
+                Quantity: {item?.quantity}
+              </p>
               <div className="flex justify-between items-center mt-2">
-              {
-                item?.size &&
-                <p className="text-sm text-gray-600">
-                  Size: {item?.size}
-                </p>
-              }
-                <div style={{backgroundColor:item?.color}} className="w-5 h-5" />
+                {item?.size && (
+                  <p className="text-sm text-gray-600">Size: {item?.size}</p>
+                )}
+                <div
+                  style={{ backgroundColor: item?.color }}
+                  className="w-5 h-5"
+                />
               </div>
               <p className="font-medium mt-2 text-red-600">
                 Rs. {item?.price * item?.quantity}
@@ -486,4 +487,5 @@ function OrderSummary({ cartItems }) {
   );
 }
 
-const inputStyle ="w-full px-4 py-1 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#70c1f3c2] focus:border-[#70c1f3c2] outline-none text-sm transition-all duration-200 placeholder-gray-400 hover:border-gray-300";
+const inputStyle =
+  "w-full px-4 py-1 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#70c1f3c2] focus:border-[#70c1f3c2] outline-none text-sm transition-all duration-200 placeholder-gray-400 hover:border-gray-300";

@@ -107,6 +107,9 @@ export default function ShoppingCart() {
                                   </h3>
                                   <p className="ml-4">{product.price}</p>
                                 </div>
+                                <p className="my-1 text-sm text-gray-900">
+                                  ( {product.sku} )
+                                </p>
                                 <div
                                   className="mt-1 w-6 h-6"
                                   style={{ backgroundColor: product.color }}
