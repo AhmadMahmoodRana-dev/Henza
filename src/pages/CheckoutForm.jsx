@@ -488,4 +488,4 @@ function OrderSummary({ cartItems }) {
 }
 
 const inputStyle =
-  "w-full px-4 py-1 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#70c1f3c2] focus:border-[#70c1f3c2] outline-none text-sm transition-all duration-200 placeholder-gray-400 hover:border-gray-300";
+  "w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#70c1f3c2] focus:border-[#70c1f3c2] outline-none text-sm transition-all duration-200 placeholder-gray-400 hover:border-gray-300";
